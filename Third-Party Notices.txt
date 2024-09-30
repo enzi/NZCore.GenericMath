@@ -1,0 +1,2 @@
+This library uses the following components:
+- Microsoft.CodeAnalysis under the MICROSOFT SOFTWARE LICENSE TERMS
