@@ -7,7 +7,7 @@ namespace NZCore
     public interface IGenericValueCalculator<T>
         where T : unmanaged
     {
-        T Add(T a, T b) { return default; }
+        public T Add(T a, T b) { return default; }
         T Subtract(T a, T b) { return default; }
         T Multiply(T a, T b) { return default; }
         T Divide(T a, T b) { return default; }

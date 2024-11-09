@@ -1,6 +1,6 @@
 {
-  "name": "com.enzisoft.nzcore.generic-math",
-  "displayName": "NZCore.GenericMath",
+  "name": "com.enzisoft.nzcore.math",
+  "displayName": "NZCore.Math",
   "version": "1.0.0",
   "unity": "2022.3",
   "dependencies": {

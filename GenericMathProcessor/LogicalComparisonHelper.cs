@@ -4,7 +4,7 @@
 
 using System;
 
-namespace NZCore.Helper
+namespace NZCore
 {
     public static class LogicalComparisonHelper
     {
