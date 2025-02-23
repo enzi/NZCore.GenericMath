@@ -257,7 +257,7 @@ namespace NZCore
 
                     if (!newValue.Equals(value))
                     {
-                        Debug.Log($"SET {value} = {newValue}");
+                        //Debug.Log($"SET {value} = {newValue}");
                         value = newValue;
                         return true;
                     }
