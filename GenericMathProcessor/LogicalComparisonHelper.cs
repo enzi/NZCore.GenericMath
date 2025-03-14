@@ -14,6 +14,8 @@ namespace NZCore
             {
                 case TriggerDataType.Short:
                     return logicValueComparison.LogicalComparison(leftValue.ShortValue, rightValue.ShortValue);
+                case TriggerDataType.UShort:
+                    return logicValueComparison.LogicalComparison(leftValue.ShortValue, rightValue.ShortValue);
                 case TriggerDataType.Half:
                     return logicValueComparison.LogicalComparison(leftValue.HalfValue, rightValue.HalfValue);
                 case TriggerDataType.Float:

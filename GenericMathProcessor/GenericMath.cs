@@ -404,6 +404,8 @@ namespace NZCore
             {
                 case TriggerDataType.Short:
                     return new GenericUnionValue() { ShortValue = GenericMath.ProcessValues(leftValue.ShortValue, rightValue.ShortValue, mathOperator) };
+                case TriggerDataType.UShort:
+                    return new GenericUnionValue() { UShortValue = GenericMath.ProcessValues(leftValue.UShortValue, rightValue.UShortValue, mathOperator) };
                 case TriggerDataType.Half:
                     return new GenericUnionValue() { HalfValue = GenericMath.ProcessValues(leftValue.HalfValue, rightValue.HalfValue, mathOperator) };
                 case TriggerDataType.Float:
@@ -433,6 +435,8 @@ namespace NZCore
             {
                 case GenericDataType.Short:
                     return new GenericUnionValue() { ShortValue = mathFunction.ProcessMathFunction(value.ShortValue) };
+                case GenericDataType.UShort:
+                    return new GenericUnionValue() { UShortValue = mathFunction.ProcessMathFunction(value.UShortValue) };
                 case GenericDataType.Half:
                     return new GenericUnionValue() { HalfValue = mathFunction.ProcessMathFunction(value.HalfValue) };
                 case GenericDataType.Float:
@@ -450,6 +454,67 @@ namespace NZCore
                 case GenericDataType.Byte:
                     return new GenericUnionValue() { ByteValue = mathFunction.ProcessMathFunction(value.ByteValue) };
                 case GenericDataType.Bool:
+                case GenericDataType.None:
+                default:
+                    throw new ArgumentOutOfRangeException($"For dataType {dataType}");
+            }
+        }
+        
+        public static unsafe void Process(GenericDataType dataType, MathOperator mathOperator, byte* valuePtr, GenericUnionValue value)
+        {
+            switch (dataType)
+            {
+                case GenericDataType.Short:
+                {
+                    Process(dataType, mathOperator, valuePtr, value.ShortValue);
+                    break;
+                }
+                case GenericDataType.UShort:
+                {
+                    Process(dataType, mathOperator, valuePtr, value.UShortValue);
+                    break;
+                }
+                case GenericDataType.Half:
+                {
+                    Process(dataType, mathOperator, valuePtr, value.HalfValue);
+                    break;
+                }
+                case GenericDataType.Float:
+                {
+                    Process(dataType, mathOperator, valuePtr, value.FloatValue);
+                    break;
+                }
+                case GenericDataType.Int:
+                {
+                    Process(dataType, mathOperator, valuePtr, value.IntValue);
+                    break;
+                }
+                case GenericDataType.UInt:
+                {
+                    Process(dataType, mathOperator, valuePtr, value.UIntValue);
+                    break;
+                }
+                case GenericDataType.Double:
+                {
+                    Process(dataType, mathOperator, valuePtr, value.DoubleValue);
+                    break;
+                }
+                case GenericDataType.ULong:
+                {
+                    Process(dataType, mathOperator, valuePtr, value.ULongValue);
+                    break;
+                }
+                case GenericDataType.Long:
+                {
+                    Process(dataType, mathOperator, valuePtr, value.LongValue);
+                    break;
+                }
+                case GenericDataType.Byte:
+                case GenericDataType.Bool:
+                {
+                    Process(dataType, mathOperator, valuePtr, value.ByteValue);
+                    break;
+                }
                 case GenericDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");

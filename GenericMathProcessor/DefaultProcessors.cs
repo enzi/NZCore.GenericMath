@@ -32,6 +32,10 @@ namespace NZCore
         public partial struct ShortProcessor : IGenericValueCalculator<short>
         {
         }
+        
+        public partial struct UShortProcessor : IGenericValueCalculator<ushort>
+        {
+        }
 
         public partial struct UIntProcessor : IGenericValueCalculator<uint>
         {
