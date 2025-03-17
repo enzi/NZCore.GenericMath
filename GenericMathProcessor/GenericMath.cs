@@ -1,245 +1,13 @@
-﻿// <copyright project="NZCore" file="GenericMathProcessor.cs" version="0.1">
-// Copyright © 2024 Thomas Enzenebner. All rights reserved.
+﻿// <copyright project="NZCore.Math" file="GenericMath.cs">
+// Copyright © 2025 Thomas Enzenebner. All rights reserved.
 // </copyright>
 
 using System;
-using Unity.Mathematics;
-using UnityEngine;
 
 namespace NZCore
 {
     public static partial class GenericMath
     {
-        public static bool ProcessValuesReturnChange<T, TProcessor>(ref T leftValue, T rightValue, MathOperator mathOperator)
-            where T : unmanaged, IEquatable<T>
-            where TProcessor : struct, IGenericValueCalculator<T>
-        {
-            var processor = default(TProcessor);
-
-            switch (mathOperator)
-            {
-                case MathOperator.Set:
-                {
-                    var newValue = rightValue;
-                    if (!newValue.Equals(leftValue))
-                    {
-                        Debug.Log($"SET {leftValue} = {newValue}");
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Add:
-                {
-                    var newValue = processor.Add(leftValue, rightValue);
-                    if (!newValue.Equals(leftValue))
-                    {
-                        leftValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Subtract:
-                {
-                    var newValue = processor.Subtract(leftValue, rightValue);
-                    if (!newValue.Equals(leftValue))
-                    {
-                        leftValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Multiply:
-                {
-                    var newValue = processor.Multiply(leftValue, rightValue);
-                    if (!newValue.Equals(leftValue))
-                    {
-                        leftValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Divide:
-                {
-                    var newValue = processor.Divide(leftValue, rightValue);
-                    if (!newValue.Equals(leftValue))
-                    {
-                        leftValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.PowerAtoB:
-                {
-                    var newValue = processor.PowerAtoB(leftValue, rightValue);
-                    if (!newValue.Equals(leftValue))
-                    {
-                        leftValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.PowerBtoA:
-                {
-                    var newValue = processor.PowerBtoA(leftValue, rightValue);
-                    if (!newValue.Equals(leftValue))
-                    {
-                        leftValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Min:
-                {
-                    var newValue = processor.Min(leftValue, rightValue);
-                    if (!newValue.Equals(leftValue))
-                    {
-                        leftValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Max:
-                {
-                    var newValue = processor.Max(leftValue, rightValue);
-                    if (!newValue.Equals(leftValue))
-                    {
-                        leftValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            return false;
-        }
-        
-        public static unsafe bool ProcessValues<T, TProcessor>(byte* valuePtr, MathOperator mathOperator, T rightValue)
-            where T : unmanaged, IEquatable<T>
-            where TProcessor : struct, IGenericValueCalculator<T>
-        {
-            var processor = default(TProcessor);
-            ref var currentValue = ref *(T*)valuePtr;
-
-            switch (mathOperator)
-            {
-                case MathOperator.Set:
-                {
-                    var newValue = rightValue;
-                    if (!newValue.Equals(currentValue))
-                    {
-                        Debug.Log($"SET {currentValue} = {newValue}");
-                        currentValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Add:
-                {
-                    var newValue = processor.Add(currentValue, rightValue);
-                    if (!newValue.Equals(currentValue))
-                    {
-                        currentValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Subtract:
-                {
-                    var newValue = processor.Subtract(currentValue, rightValue);
-                    if (!newValue.Equals(currentValue))
-                    {
-                        currentValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Multiply:
-                {
-                    var newValue = processor.Multiply(currentValue, rightValue);
-                    if (!newValue.Equals(currentValue))
-                    {
-                        currentValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Divide:
-                {
-                    var newValue = processor.Divide(currentValue, rightValue);
-                    if (!newValue.Equals(currentValue))
-                    {
-                        currentValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.PowerAtoB:
-                {
-                    var newValue = processor.PowerAtoB(currentValue, rightValue);
-                    if (!newValue.Equals(currentValue))
-                    {
-                        currentValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.PowerBtoA:
-                {
-                    var newValue = processor.PowerBtoA(currentValue, rightValue);
-                    if (!newValue.Equals(currentValue))
-                    {
-                        currentValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Min:
-                {
-                    var newValue = processor.Min(currentValue, rightValue);
-                    if (!newValue.Equals(currentValue))
-                    {
-                        currentValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Max:
-                {
-                    var newValue = processor.Max(currentValue, rightValue);
-                    if (!newValue.Equals(currentValue))
-                    {
-                        currentValue = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            return false;
-        }
-
         public static unsafe bool ProcessValuesWithMinMax<T, TProcessor>(byte* valuePtr, MathOperator mathOperator, T changeValue, T minValue, T maxValue)
             where T : unmanaged, IEquatable<T>
             where TProcessor : struct, IGenericValueCalculator<T>
@@ -403,26 +171,27 @@ namespace NZCore
             switch (dataType)
             {
                 case TriggerDataType.Short:
-                    return new GenericUnionValue() { ShortValue = GenericMath.ProcessValues(leftValue.ShortValue, rightValue.ShortValue, mathOperator) };
+                    return new GenericUnionValue { ShortValue = ProcessValues(leftValue.ShortValue, rightValue.ShortValue, mathOperator) };
                 case TriggerDataType.UShort:
-                    return new GenericUnionValue() { UShortValue = GenericMath.ProcessValues(leftValue.UShortValue, rightValue.UShortValue, mathOperator) };
+                    return new GenericUnionValue { UShortValue = ProcessValues(leftValue.UShortValue, rightValue.UShortValue, mathOperator) };
                 case TriggerDataType.Half:
-                    return new GenericUnionValue() { HalfValue = GenericMath.ProcessValues(leftValue.HalfValue, rightValue.HalfValue, mathOperator) };
+                    return new GenericUnionValue { HalfValue = ProcessValues(leftValue.HalfValue, rightValue.HalfValue, mathOperator) };
                 case TriggerDataType.Float:
-                    return new GenericUnionValue() { FloatValue = GenericMath.ProcessValues(leftValue.FloatValue, rightValue.FloatValue, mathOperator) };
+                    return new GenericUnionValue { FloatValue = ProcessValues(leftValue.FloatValue, rightValue.FloatValue, mathOperator) };
                 case TriggerDataType.Int:
-                    return new GenericUnionValue() { IntValue = GenericMath.ProcessValues(leftValue.IntValue, rightValue.IntValue, mathOperator) };
+                    return new GenericUnionValue { IntValue = ProcessValues(leftValue.IntValue, rightValue.IntValue, mathOperator) };
                 case TriggerDataType.UInt:
-                    return new GenericUnionValue() { UIntValue = GenericMath.ProcessValues(leftValue.UIntValue, rightValue.UIntValue, mathOperator) };
+                    return new GenericUnionValue { UIntValue = ProcessValues(leftValue.UIntValue, rightValue.UIntValue, mathOperator) };
                 case TriggerDataType.Double:
-                    return new GenericUnionValue() { DoubleValue = GenericMath.ProcessValues(leftValue.DoubleValue, rightValue.DoubleValue, mathOperator) };
+                    return new GenericUnionValue { DoubleValue = ProcessValues(leftValue.DoubleValue, rightValue.DoubleValue, mathOperator) };
                 case TriggerDataType.ULong:
-                    return new GenericUnionValue() { ULongValue = GenericMath.ProcessValues(leftValue.ULongValue, rightValue.ULongValue, mathOperator) };
+                    return new GenericUnionValue { ULongValue = ProcessValues(leftValue.ULongValue, rightValue.ULongValue, mathOperator) };
                 case TriggerDataType.Long:
-                    return new GenericUnionValue() { LongValue = GenericMath.ProcessValues(leftValue.LongValue, rightValue.LongValue, mathOperator) };
+                    return new GenericUnionValue { LongValue = ProcessValues(leftValue.LongValue, rightValue.LongValue, mathOperator) };
                 case TriggerDataType.Byte:
-                    return new GenericUnionValue() { ByteValue = GenericMath.ProcessValues(leftValue.ByteValue, rightValue.ByteValue, mathOperator) };
+                    return new GenericUnionValue { ByteValue = ProcessValues(leftValue.ByteValue, rightValue.ByteValue, mathOperator) };
                 case TriggerDataType.Bool:
+                    return new GenericUnionValue { BoolValue = ProcessValues(leftValue.ByteValue, rightValue.ByteValue, mathOperator) > 0 };
                 case TriggerDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");
@@ -434,26 +203,27 @@ namespace NZCore
             switch (dataType)
             {
                 case GenericDataType.Short:
-                    return new GenericUnionValue() { ShortValue = mathFunction.ProcessMathFunction(value.ShortValue) };
+                    return new GenericUnionValue { ShortValue = mathFunction.ProcessMathFunction(value.ShortValue) };
                 case GenericDataType.UShort:
-                    return new GenericUnionValue() { UShortValue = mathFunction.ProcessMathFunction(value.UShortValue) };
+                    return new GenericUnionValue { UShortValue = mathFunction.ProcessMathFunction(value.UShortValue) };
                 case GenericDataType.Half:
-                    return new GenericUnionValue() { HalfValue = mathFunction.ProcessMathFunction(value.HalfValue) };
+                    return new GenericUnionValue { HalfValue = mathFunction.ProcessMathFunction(value.HalfValue) };
                 case GenericDataType.Float:
-                    return new GenericUnionValue() { FloatValue = mathFunction.ProcessMathFunction(value.FloatValue) };
+                    return new GenericUnionValue { FloatValue = mathFunction.ProcessMathFunction(value.FloatValue) };
                 case GenericDataType.Int:
-                    return new GenericUnionValue() { IntValue = mathFunction.ProcessMathFunction(value.IntValue) };
+                    return new GenericUnionValue { IntValue = mathFunction.ProcessMathFunction(value.IntValue) };
                 case GenericDataType.UInt:
-                    return new GenericUnionValue() { UIntValue = mathFunction.ProcessMathFunction(value.UIntValue) };
+                    return new GenericUnionValue { UIntValue = mathFunction.ProcessMathFunction(value.UIntValue) };
                 case GenericDataType.Double:
-                    return new GenericUnionValue() { DoubleValue = mathFunction.ProcessMathFunction(value.DoubleValue) };
+                    return new GenericUnionValue { DoubleValue = mathFunction.ProcessMathFunction(value.DoubleValue) };
                 case GenericDataType.ULong:
-                    return new GenericUnionValue() { ULongValue = mathFunction.ProcessMathFunction(value.ULongValue) };
+                    return new GenericUnionValue { ULongValue = mathFunction.ProcessMathFunction(value.ULongValue) };
                 case GenericDataType.Long:
-                    return new GenericUnionValue() { LongValue = mathFunction.ProcessMathFunction(value.LongValue) };
+                    return new GenericUnionValue { LongValue = mathFunction.ProcessMathFunction(value.LongValue) };
                 case GenericDataType.Byte:
-                    return new GenericUnionValue() { ByteValue = mathFunction.ProcessMathFunction(value.ByteValue) };
+                    return new GenericUnionValue { ByteValue = mathFunction.ProcessMathFunction(value.ByteValue) };
                 case GenericDataType.Bool:
+                    return new GenericUnionValue { BoolValue = mathFunction.ProcessMathFunction(value.ByteValue) > 0 };
                 case GenericDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");

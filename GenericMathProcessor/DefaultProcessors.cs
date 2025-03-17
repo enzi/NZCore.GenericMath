@@ -1,5 +1,5 @@
-// <copyright project="NZCore" file="DefaultProcessors.cs" version="0.1">
-// Copyright © 2024 Thomas Enzenebner. All rights reserved.
+// <copyright project="NZCore.Math" file="DefaultProcessors.cs">
+// Copyright © 2025 Thomas Enzenebner. All rights reserved.
 // </copyright>
 
 using Unity.Mathematics;
@@ -28,7 +28,6 @@ namespace NZCore
         {
         }
 
-        //public partial struct NZValueProcessor : IGenericValueCalculator<NZValue> { }
         public partial struct ShortProcessor : IGenericValueCalculator<short>
         {
         }
@@ -48,9 +47,5 @@ namespace NZCore
         public partial struct ULongProcessor : IGenericValueCalculator<ulong>
         {
         }
-
-        // public partial struct BoolProcessor : IGenericValueCalculator<bool>
-        // {
-        // }
     }
 }

@@ -1,5 +1,5 @@
-// <copyright project="NZCore" file="LogicalComparisonHelper.cs" version="0.1">
-// Copyright © 2024 Thomas Enzenebner. All rights reserved.
+// <copyright project="NZCore.Math" file="LogicalComparisonHelper.cs">
+// Copyright © 2025 Thomas Enzenebner. All rights reserved.
 // </copyright>
 
 using System;
@@ -38,36 +38,5 @@ namespace NZCore
                     throw new ArgumentOutOfRangeException($"For Key {dataType}");
             }
         }
-
-
-        // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        // public static bool LogicalComparison<T, TProcessor>(this ConditionLogicValueComparison logicValueComparison, T leftValue, T rightValue)
-        //     where T : unmanaged, IEquatable<T>
-        //     where TProcessor : struct, IGenericValueCalculator<T>
-        // {
-        //     TProcessor processor = default;
-        //
-        //     switch (logicValueComparison)
-        //     {
-        //         case ConditionLogicValueComparison.Any:
-        //             return processor.Any(leftValue, rightValue);
-        //         case ConditionLogicValueComparison.Equal:
-        //             return processor.Equal(leftValue, rightValue);
-        //         case ConditionLogicValueComparison.NotEqual:
-        //             return processor.NotEqual(leftValue, rightValue);
-        //         case ConditionLogicValueComparison.GreaterThan:
-        //             return processor.GreaterThan(leftValue, rightValue);
-        //         case ConditionLogicValueComparison.LesserThan:
-        //             return processor.LesserThan(leftValue, rightValue);
-        //         case ConditionLogicValueComparison.GreaterEqual:
-        //             return processor.GreaterEqual(leftValue, rightValue);
-        //         case ConditionLogicValueComparison.LesserEqual:
-        //             return processor.LesserEqual(leftValue, rightValue);
-        //         case ConditionLogicValueComparison.HasFlag:
-        //             return processor.HasFlag(leftValue, rightValue);
-        //     }
-        //
-        //     return false;
-        // }
     }
 }
