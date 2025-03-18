@@ -8,144 +8,124 @@ namespace NZCore
 {
     public static partial class GenericMath
     {
-        public static unsafe bool ProcessValuesWithMinMax<T, TProcessor>(byte* valuePtr, MathOperator mathOperator, T changeValue, T minValue, T maxValue)
+        public static unsafe bool ProcessReturnChange<T, TProcessor>(this MathOperator mathOperator, byte* valuePtr, T rightValue)
             where T : unmanaged, IEquatable<T>
             where TProcessor : struct, IGenericValueCalculator<T>
         {
             var processor = default(TProcessor);
             ref var value = ref *(T*)valuePtr;
 
-            switch (mathOperator)
+            var newValue = mathOperator switch
             {
-                case MathOperator.Set:
-                {
-                    var newValue = changeValue;
-                    newValue = processor.Min(newValue, maxValue);
-                    newValue = processor.Max(newValue, minValue);
+                MathOperator.Set => rightValue,
+                MathOperator.Add => processor.Add(value, rightValue),
+                MathOperator.Subtract => processor.Subtract(value, rightValue),
+                MathOperator.Multiply => processor.Multiply(value, rightValue),
+                MathOperator.Divide => processor.Divide(value, rightValue),
+                MathOperator.PowerAtoB => processor.PowerAtoB(value, rightValue),
+                MathOperator.PowerBtoA => processor.PowerBtoA(value, rightValue),
+                MathOperator.Min => processor.Min(value, rightValue),
+                MathOperator.Max => processor.Max(value, rightValue),
+                _ => value
+            };
 
-                    if (!newValue.Equals(value))
-                    {
-                        //Debug.Log($"SET {value} = {newValue}");
-                        value = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Add:
-                {
-                    var newValue = processor.Add(value, changeValue);
-                    newValue = processor.Min(newValue, maxValue);
-                    newValue = processor.Max(newValue, minValue);
-
-                    if (!newValue.Equals(value))
-                    {
-                        value = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Subtract:
-                {
-                    var newValue = processor.Subtract(value, changeValue);
-                    newValue = processor.Min(newValue, maxValue);
-                    newValue = processor.Max(newValue, minValue);
-
-                    if (!newValue.Equals(value))
-                    {
-                        value = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Multiply:
-                {
-                    var newValue = processor.Multiply(value, changeValue);
-                    newValue = processor.Min(newValue, maxValue);
-                    newValue = processor.Max(newValue, minValue);
-
-                    if (!newValue.Equals(value))
-                    {
-                        value = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.Divide:
-                {
-                    var newValue = processor.Divide(value, changeValue);
-                    newValue = processor.Min(newValue, maxValue);
-                    newValue = processor.Max(newValue, minValue);
-
-                    if (!newValue.Equals(value))
-                    {
-                        value = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.PowerAtoB:
-                {
-                    var newValue = processor.PowerAtoB(value, changeValue);
-                    newValue = processor.Min(newValue, maxValue);
-                    newValue = processor.Max(newValue, minValue);
-
-                    if (!newValue.Equals(value))
-                    {
-                        value = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                case MathOperator.PowerBtoA:
-                {
-                    var newValue = processor.PowerBtoA(value, changeValue);
-                    newValue = processor.Min(newValue, maxValue);
-                    newValue = processor.Max(newValue, minValue);
-
-                    if (!newValue.Equals(value))
-                    {
-                        value = newValue;
-                        return true;
-                    }
-
-                    break;
-                }
-                default:
-                    throw new ArgumentOutOfRangeException();
+            if (newValue.Equals(value))
+            {
+                return false;
             }
 
-            return false;
+            //Debug.Log($"SET {leftValue} = {newValue}");
+            value = newValue;
+            return true;
+
+        }
+        
+        public static bool ProcessReturnChange<T, TProcessor>(this MathOperator mathOperator, ref T leftValue, T rightValue)
+            where T : unmanaged, IEquatable<T>
+            where TProcessor : struct, IGenericValueCalculator<T>
+        {
+            var processor = default(TProcessor);
+
+            var newValue = mathOperator switch
+            {
+                MathOperator.Set => rightValue,
+                MathOperator.Add => processor.Add(leftValue, rightValue),
+                MathOperator.Subtract => processor.Subtract(leftValue, rightValue),
+                MathOperator.Multiply => processor.Multiply(leftValue, rightValue),
+                MathOperator.Divide => processor.Divide(leftValue, rightValue),
+                MathOperator.PowerAtoB => processor.PowerAtoB(leftValue, rightValue),
+                MathOperator.PowerBtoA => processor.PowerBtoA(leftValue, rightValue),
+                MathOperator.Min => processor.Min(leftValue, rightValue),
+                MathOperator.Max => processor.Max(leftValue, rightValue),
+                _ => leftValue
+            };
+
+            if (newValue.Equals(leftValue))
+            {
+                return false;
+            }
+
+            //Debug.Log($"SET {leftValue} = {newValue}");
+            leftValue = newValue;
+            return true;
+
+        }
+        
+        public static unsafe bool ProcessWithMinMax<T, TProcessor>(this MathOperator mathOperator, byte* valuePtr, T changeValue, T minValue, T maxValue)
+            where T : unmanaged, IEquatable<T>
+            where TProcessor : struct, IGenericValueCalculator<T>
+        {
+            var processor = default(TProcessor);
+            ref var value = ref *(T*)valuePtr;
+
+            var newValue = mathOperator switch
+            {
+                MathOperator.Set => changeValue,
+                MathOperator.Add => processor.Add(value, changeValue),
+                MathOperator.Subtract => processor.Subtract(value, changeValue),
+                MathOperator.Multiply => processor.Multiply(value, changeValue),
+                MathOperator.Divide => processor.Divide(value, changeValue),
+                MathOperator.PowerAtoB => processor.PowerAtoB(value, changeValue),
+                MathOperator.PowerBtoA => processor.PowerBtoA(value, changeValue),
+                _ => value
+            };
+
+            newValue = processor.Min(newValue, maxValue);
+            newValue = processor.Max(newValue, minValue);
+
+            if (newValue.Equals(value))
+            {
+                return false;
+            }
+
+            //Debug.Log($"SET {value} = {newValue}");
+            value = newValue;
+            return true;
         }
 
-        public static unsafe void ProcessValues<T, TProcessor>(byte* valuePtrToA, byte* valuePtrToB, MathOperator mathOperator)
+        public static unsafe void Process<T, TProcessor>(this MathOperator mathOperator, byte* valuePtrToA, byte* valuePtrToB)
             where T : unmanaged, IEquatable<T>
             where TProcessor : struct, IGenericValueCalculator<T>
         {
             ref T valueA = ref *(T*)valuePtrToA;
-            valueA = ProcessValues<T, TProcessor>(valueA, valuePtrToB, mathOperator);
+            valueA = Process<T, TProcessor>(mathOperator, valueA, valuePtrToB);
         }
 
-        public static unsafe T ProcessValues<T, TProcessor>(byte* valuePtrToA, T valueB, MathOperator mathOperator)
+        public static unsafe T Process<T, TProcessor>(this MathOperator mathOperator, byte* valuePtrToA, T valueB)
             where T : unmanaged, IEquatable<T>
             where TProcessor : struct, IGenericValueCalculator<T>
         {
-            return ProcessValues<T, TProcessor>(*(T*)valuePtrToA, valueB, mathOperator);
+            return Process<T, TProcessor>(mathOperator, *(T*)valuePtrToA, valueB);
         }
 
-        public static unsafe T ProcessValues<T, TProcessor>(T valueA, byte* valuePtrToB, MathOperator mathOperator)
+        public static unsafe T Process<T, TProcessor>(this MathOperator mathOperator, T valueA, byte* valuePtrToB)
             where T : unmanaged, IEquatable<T>
             where TProcessor : struct, IGenericValueCalculator<T>
         {
-            return ProcessValues<T, TProcessor>(valueA, *(T*)valuePtrToB, mathOperator);
+            return Process<T, TProcessor>(mathOperator, valueA, *(T*)valuePtrToB);
         }
 
-        public static T ProcessValues<T, TProcessor>(T valueA, T valueB, MathOperator mathOperator)
+        public static T Process<T, TProcessor>(this MathOperator mathOperator, T valueA, T valueB)
             where T : unmanaged, IEquatable<T>
             where TProcessor : struct, IGenericValueCalculator<T>
         {
@@ -166,39 +146,39 @@ namespace NZCore
             };
         }
         
-        public static GenericUnionValue ProcessValues(TriggerDataType dataType, GenericUnionValue leftValue, GenericUnionValue rightValue, MathOperator mathOperator)
+        public static GenericUnionValue ProcessReturnValue(this MathOperator mathOperator, TriggerDataType dataType, GenericUnionValue leftValue, GenericUnionValue rightValue)
         {
             switch (dataType)
             {
                 case TriggerDataType.Short:
-                    return new GenericUnionValue { ShortValue = ProcessValues(leftValue.ShortValue, rightValue.ShortValue, mathOperator) };
+                    return new GenericUnionValue { ShortValue = mathOperator.ProcessReturnValue(leftValue.ShortValue, rightValue.ShortValue) };
                 case TriggerDataType.UShort:
-                    return new GenericUnionValue { UShortValue = ProcessValues(leftValue.UShortValue, rightValue.UShortValue, mathOperator) };
+                    return new GenericUnionValue { UShortValue = mathOperator.ProcessReturnValue(leftValue.UShortValue, rightValue.UShortValue) };
                 case TriggerDataType.Half:
-                    return new GenericUnionValue { HalfValue = ProcessValues(leftValue.HalfValue, rightValue.HalfValue, mathOperator) };
+                    return new GenericUnionValue { HalfValue = mathOperator.ProcessReturnValue(leftValue.HalfValue, rightValue.HalfValue) };
                 case TriggerDataType.Float:
-                    return new GenericUnionValue { FloatValue = ProcessValues(leftValue.FloatValue, rightValue.FloatValue, mathOperator) };
+                    return new GenericUnionValue { FloatValue = mathOperator.ProcessReturnValue(leftValue.FloatValue, rightValue.FloatValue) };
                 case TriggerDataType.Int:
-                    return new GenericUnionValue { IntValue = ProcessValues(leftValue.IntValue, rightValue.IntValue, mathOperator) };
+                    return new GenericUnionValue { IntValue = mathOperator.ProcessReturnValue(leftValue.IntValue, rightValue.IntValue) };
                 case TriggerDataType.UInt:
-                    return new GenericUnionValue { UIntValue = ProcessValues(leftValue.UIntValue, rightValue.UIntValue, mathOperator) };
+                    return new GenericUnionValue { UIntValue = mathOperator.ProcessReturnValue(leftValue.UIntValue, rightValue.UIntValue) };
                 case TriggerDataType.Double:
-                    return new GenericUnionValue { DoubleValue = ProcessValues(leftValue.DoubleValue, rightValue.DoubleValue, mathOperator) };
+                    return new GenericUnionValue { DoubleValue = mathOperator.ProcessReturnValue(leftValue.DoubleValue, rightValue.DoubleValue) };
                 case TriggerDataType.ULong:
-                    return new GenericUnionValue { ULongValue = ProcessValues(leftValue.ULongValue, rightValue.ULongValue, mathOperator) };
+                    return new GenericUnionValue { ULongValue = mathOperator.ProcessReturnValue(leftValue.ULongValue, rightValue.ULongValue) };
                 case TriggerDataType.Long:
-                    return new GenericUnionValue { LongValue = ProcessValues(leftValue.LongValue, rightValue.LongValue, mathOperator) };
+                    return new GenericUnionValue { LongValue = mathOperator.ProcessReturnValue(leftValue.LongValue, rightValue.LongValue) };
                 case TriggerDataType.Byte:
-                    return new GenericUnionValue { ByteValue = ProcessValues(leftValue.ByteValue, rightValue.ByteValue, mathOperator) };
+                    return new GenericUnionValue { ByteValue = mathOperator.ProcessReturnValue(leftValue.ByteValue, rightValue.ByteValue) };
                 case TriggerDataType.Bool:
-                    return new GenericUnionValue { BoolValue = ProcessValues(leftValue.ByteValue, rightValue.ByteValue, mathOperator) > 0 };
+                    return new GenericUnionValue { BoolValue = mathOperator.ProcessReturnValue(leftValue.ByteValue, rightValue.ByteValue) > 0 };
                 case TriggerDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");
             }
         }
 
-        public static GenericUnionValue ProcessMathFunction(GenericDataType dataType, MathFunction mathFunction, GenericUnionValue value)
+        public static GenericUnionValue ProcessMathFunction(this MathFunction mathFunction, GenericDataType dataType, GenericUnionValue value)
         {
             switch (dataType)
             {
@@ -230,59 +210,59 @@ namespace NZCore
             }
         }
         
-        public static unsafe void Process(GenericDataType dataType, MathOperator mathOperator, byte* valuePtr, GenericUnionValue value)
+        public static unsafe void Process(this MathOperator mathOperator, GenericDataType dataType, byte* valuePtr, GenericUnionValue value)
         {
             switch (dataType)
             {
                 case GenericDataType.Short:
                 {
-                    Process(dataType, mathOperator, valuePtr, value.ShortValue);
+                    mathOperator.Process(dataType, valuePtr, value.ShortValue);
                     break;
                 }
                 case GenericDataType.UShort:
                 {
-                    Process(dataType, mathOperator, valuePtr, value.UShortValue);
+                    mathOperator.Process(dataType, valuePtr, value.UShortValue);
                     break;
                 }
                 case GenericDataType.Half:
                 {
-                    Process(dataType, mathOperator, valuePtr, value.HalfValue);
+                    mathOperator.Process(dataType, valuePtr, value.HalfValue);
                     break;
                 }
                 case GenericDataType.Float:
                 {
-                    Process(dataType, mathOperator, valuePtr, value.FloatValue);
+                    mathOperator.Process(dataType, valuePtr, value.FloatValue);
                     break;
                 }
                 case GenericDataType.Int:
                 {
-                    Process(dataType, mathOperator, valuePtr, value.IntValue);
+                    mathOperator.Process(dataType, valuePtr, value.IntValue);
                     break;
                 }
                 case GenericDataType.UInt:
                 {
-                    Process(dataType, mathOperator, valuePtr, value.UIntValue);
+                    mathOperator.Process(dataType, valuePtr, value.UIntValue);
                     break;
                 }
                 case GenericDataType.Double:
                 {
-                    Process(dataType, mathOperator, valuePtr, value.DoubleValue);
+                    mathOperator.Process(dataType, valuePtr, value.DoubleValue);
                     break;
                 }
                 case GenericDataType.ULong:
                 {
-                    Process(dataType, mathOperator, valuePtr, value.ULongValue);
+                    mathOperator.Process(dataType, valuePtr, value.ULongValue);
                     break;
                 }
                 case GenericDataType.Long:
                 {
-                    Process(dataType, mathOperator, valuePtr, value.LongValue);
+                    mathOperator.Process(dataType, valuePtr, value.LongValue);
                     break;
                 }
                 case GenericDataType.Byte:
                 case GenericDataType.Bool:
                 {
-                    Process(dataType, mathOperator, valuePtr, value.ByteValue);
+                    mathOperator.Process(dataType, valuePtr, value.ByteValue);
                     break;
                 }
                 case GenericDataType.None:
