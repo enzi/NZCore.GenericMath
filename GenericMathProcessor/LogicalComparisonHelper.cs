@@ -8,32 +8,32 @@ namespace NZCore
 {
     public static class LogicalComparisonHelper
     {
-        public static bool LogicalComparison(this ConditionLogicValueComparison logicValueComparison, TriggerDataType dataType, GenericUnionValue leftValue, GenericUnionValue rightValue)
+        public static bool LogicalComparison(this ConditionLogicValueComparison logicValueComparison, GenericDataType dataType, GenericUnionValue leftValue, GenericUnionValue rightValue)
         {
             switch (dataType)
             {
-                case TriggerDataType.Short:
+                case GenericDataType.Short:
                     return logicValueComparison.LogicalComparison(leftValue.ShortValue, rightValue.ShortValue);
-                case TriggerDataType.UShort:
-                    return logicValueComparison.LogicalComparison(leftValue.ShortValue, rightValue.ShortValue);
-                case TriggerDataType.Half:
+                case GenericDataType.UShort:
+                    return logicValueComparison.LogicalComparison(leftValue.UShortValue, rightValue.UShortValue);
+                case GenericDataType.Half:
                     return logicValueComparison.LogicalComparison(leftValue.HalfValue, rightValue.HalfValue);
-                case TriggerDataType.Float:
+                case GenericDataType.Float:
                     return logicValueComparison.LogicalComparison(leftValue.FloatValue, rightValue.FloatValue);
-                case TriggerDataType.Int:
+                case GenericDataType.Int:
                     return logicValueComparison.LogicalComparison(leftValue.IntValue, rightValue.IntValue);
-                case TriggerDataType.UInt:
+                case GenericDataType.UInt:
                     return logicValueComparison.LogicalComparison(leftValue.UIntValue, rightValue.UIntValue);
-                case TriggerDataType.Double:
+                case GenericDataType.Double:
                     return logicValueComparison.LogicalComparison(leftValue.DoubleValue, rightValue.DoubleValue);
-                case TriggerDataType.ULong:
+                case GenericDataType.ULong:
                     return logicValueComparison.LogicalComparison(leftValue.ULongValue, rightValue.ULongValue);
-                case TriggerDataType.Long:
+                case GenericDataType.Long:
                     return logicValueComparison.LogicalComparison(leftValue.LongValue, rightValue.LongValue);
-                case TriggerDataType.Byte:
+                case GenericDataType.Byte:
                     return logicValueComparison.LogicalComparison(leftValue.ByteValue, rightValue.ByteValue);
-                case TriggerDataType.Bool:
-                case TriggerDataType.None:
+                case GenericDataType.Bool:
+                case GenericDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException($"For Key {dataType}");
             }

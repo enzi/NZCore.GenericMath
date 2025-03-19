@@ -3,6 +3,8 @@
 // </copyright>
 
 using System;
+using Unity.Mathematics;
+using UnityEngine;
 
 namespace NZCore
 {
@@ -146,33 +148,33 @@ namespace NZCore
             };
         }
         
-        public static GenericUnionValue ProcessReturnValue(this MathOperator mathOperator, TriggerDataType dataType, GenericUnionValue leftValue, GenericUnionValue rightValue)
+        public static GenericUnionValue ProcessReturnValue(this MathOperator mathOperator, GenericDataType dataType, GenericUnionValue leftValue, GenericUnionValue rightValue)
         {
             switch (dataType)
             {
-                case TriggerDataType.Short:
+                case GenericDataType.Short:
                     return new GenericUnionValue { ShortValue = mathOperator.ProcessReturnValue(leftValue.ShortValue, rightValue.ShortValue) };
-                case TriggerDataType.UShort:
+                case GenericDataType.UShort:
                     return new GenericUnionValue { UShortValue = mathOperator.ProcessReturnValue(leftValue.UShortValue, rightValue.UShortValue) };
-                case TriggerDataType.Half:
+                case GenericDataType.Half:
                     return new GenericUnionValue { HalfValue = mathOperator.ProcessReturnValue(leftValue.HalfValue, rightValue.HalfValue) };
-                case TriggerDataType.Float:
+                case GenericDataType.Float:
                     return new GenericUnionValue { FloatValue = mathOperator.ProcessReturnValue(leftValue.FloatValue, rightValue.FloatValue) };
-                case TriggerDataType.Int:
+                case GenericDataType.Int:
                     return new GenericUnionValue { IntValue = mathOperator.ProcessReturnValue(leftValue.IntValue, rightValue.IntValue) };
-                case TriggerDataType.UInt:
+                case GenericDataType.UInt:
                     return new GenericUnionValue { UIntValue = mathOperator.ProcessReturnValue(leftValue.UIntValue, rightValue.UIntValue) };
-                case TriggerDataType.Double:
+                case GenericDataType.Double:
                     return new GenericUnionValue { DoubleValue = mathOperator.ProcessReturnValue(leftValue.DoubleValue, rightValue.DoubleValue) };
-                case TriggerDataType.ULong:
+                case GenericDataType.ULong:
                     return new GenericUnionValue { ULongValue = mathOperator.ProcessReturnValue(leftValue.ULongValue, rightValue.ULongValue) };
-                case TriggerDataType.Long:
+                case GenericDataType.Long:
                     return new GenericUnionValue { LongValue = mathOperator.ProcessReturnValue(leftValue.LongValue, rightValue.LongValue) };
-                case TriggerDataType.Byte:
+                case GenericDataType.Byte:
                     return new GenericUnionValue { ByteValue = mathOperator.ProcessReturnValue(leftValue.ByteValue, rightValue.ByteValue) };
-                case TriggerDataType.Bool:
+                case GenericDataType.Bool:
                     return new GenericUnionValue { BoolValue = mathOperator.ProcessReturnValue(leftValue.ByteValue, rightValue.ByteValue) > 0 };
-                case TriggerDataType.None:
+                case GenericDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");
             }
@@ -269,6 +271,214 @@ namespace NZCore
                 default:
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");
             }
+        }
+        
+        public static unsafe bool LogicalComparison(this ConditionLogicValueComparison logicValueComparison, GenericDataType dataType, byte* valueA, GenericUnionValue valueB)
+        {
+            switch (dataType)
+            {
+                case GenericDataType.Byte:
+                {
+                    var val = *(byte*)valueA;
+                    return logicValueComparison.LogicalComparison(val, valueB.ByteValue);
+                }
+                case GenericDataType.Double:
+                {
+                    var val = *(double*)valueA;
+                    return logicValueComparison.LogicalComparison(val, valueB.DoubleValue);
+                }
+                case GenericDataType.Float:
+                {
+                    var val = *(float*)valueA;
+                    return logicValueComparison.LogicalComparison(val, valueB.FloatValue);
+                }
+                case GenericDataType.Half:
+                {
+                    var val = *(half*)valueA;
+                    return logicValueComparison.LogicalComparison(val, valueB.HalfValue);
+                }
+                case GenericDataType.Int:
+                {
+                    var val = *(int*)valueA;
+                    return logicValueComparison.LogicalComparison(val, valueB.IntValue);
+                }
+                case GenericDataType.Short:
+                {
+                    var val = *(short*)valueA;
+                    return logicValueComparison.LogicalComparison(val, valueB.ShortValue);
+                }
+                case GenericDataType.UShort:
+                {
+                    var val = *(ushort*)valueA;
+                    return logicValueComparison.LogicalComparison(val, valueB.UShortValue);
+                }
+                case GenericDataType.UInt:
+                {
+                    var val = *(uint*)valueA;
+                    return logicValueComparison.LogicalComparison(val, valueB.UIntValue);
+                }
+                case GenericDataType.Long:
+                {
+                    var val = *(long*)valueA;
+                    return logicValueComparison.LogicalComparison(val, valueB.LongValue);
+                }
+                case GenericDataType.ULong:
+                {
+                    var val = *(ulong*)valueA;
+                    return logicValueComparison.LogicalComparison(val, valueB.ULongValue);
+                }
+            }
+
+            return false;
+        }
+
+        public static unsafe bool MultiplyBaseValue(GenericDataType dataType, byte* valuePtr, byte* baseValuePtr, int multiplier)
+        {
+            switch (dataType)
+            {
+                case GenericDataType.Short:
+                {
+                    ref var value = ref *(short*)valuePtr;
+                    ref var baseValue = ref *(short*)baseValuePtr;
+                    var newValue = (short)(baseValue * multiplier);
+
+                    if (newValue == value)
+                    {
+                        return false;
+                    }
+
+                    value = newValue;
+                    return true;
+                }
+                case GenericDataType.UShort:
+                {
+                    ref var value = ref *(ushort*)valuePtr;
+                    ref var baseValue = ref *(ushort*)baseValuePtr;
+                    var newValue = (ushort)(baseValue * multiplier);
+
+                    if (newValue == value)
+                    {
+                        return false;
+                    }
+
+                    value = newValue;
+                    return true;
+                }
+                case GenericDataType.Half:
+                {
+                    ref var value = ref *(half*)valuePtr;
+                    ref var baseValue = ref *(half*)baseValuePtr;
+                    var newValue = (half)(baseValue * multiplier);
+
+                    if (newValue == value)
+                    {
+                        return false;
+                    }
+
+                    value = newValue;
+                    return true;
+                }
+                case GenericDataType.Float:
+                {
+                    ref float value = ref *(float*)valuePtr;
+                    ref float baseValue = ref *(float*)baseValuePtr;
+                    var newValue = baseValue * multiplier;
+
+                    if (Mathf.Approximately(newValue, value))
+                    {
+                        return false;
+                    }
+
+                    value = newValue;
+                    return true;
+                }
+                case GenericDataType.Int:
+                {
+                    ref var value = ref *(int*)valuePtr;
+                    ref var baseValue = ref *(int*)baseValuePtr;
+                    var newValue = (int)(baseValue * multiplier);
+
+                    if (newValue == value)
+                    {
+                        return false;
+                    }
+
+                    value = newValue;
+                    return true;
+                }
+                case GenericDataType.UInt:
+                {
+                    ref var value = ref *(half*)valuePtr;
+                    ref var baseValue = ref *(half*)baseValuePtr;
+                    var newValue = (half)(baseValue * multiplier);
+
+                    if (newValue == value)
+                    {
+                        return false;
+                    }
+
+                    value = newValue;
+                    return true;
+                }
+                case GenericDataType.Double:
+                {
+                    ref var value = ref *(double*)valuePtr;
+                    ref var baseValue = ref *(double*)baseValuePtr;
+                    var newValue = (double)(baseValue * multiplier);
+
+                    if ((Math.Abs(newValue - value) < double.Epsilon))
+                    {
+                        return false;
+                    }
+
+                    value = newValue;
+                    return true;
+                }
+                case GenericDataType.Long:
+                {
+                    ref var value = ref *(long*)valuePtr;
+                    ref var baseValue = ref *(long*)baseValuePtr;
+                    var newValue = (long)(baseValue * multiplier);
+
+                    if (newValue == value)
+                    {
+                        return false;
+                    }
+
+                    value = newValue;
+                    return true;
+                }
+                case GenericDataType.ULong:
+                {
+                    ref var value = ref *(ulong*)valuePtr;
+                    ref var baseValue = ref *(ulong*)baseValuePtr;
+                    var newValue = (ulong)(baseValue * (ulong) multiplier);
+
+                    if (newValue == value)
+                    {
+                        return false;
+                    }
+
+                    value = newValue;
+                    return true;
+                }
+                case GenericDataType.Byte:
+                {
+                    ref var value = ref *(byte*)valuePtr;
+                    ref var baseValue = ref *(byte*)baseValuePtr;
+                    var newValue = (byte)(baseValue * multiplier);
+
+                    if (newValue == value)
+                    {
+                        return false;
+                    }
+
+                    value = newValue;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // TODO wait until .NET6 arrives in Unity :)
