@@ -4,9 +4,11 @@
 
 using System;
 using Unity.Assertions;
+using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace NZCore
 {
@@ -203,6 +205,92 @@ namespace NZCore
             }
 
             return null;
+        }
+
+        public static void PrintGenericValue(this GenericUnionValue value, GenericDataType dataType)
+        {
+            switch (dataType)
+            {
+                case GenericDataType.Half:
+                    Debug.Log($"{value.HalfValue}");
+                    break;
+                case GenericDataType.Short:
+                    Debug.Log($"{value.ShortValue}");
+                    break;
+                case GenericDataType.UShort:
+                    Debug.Log($"{value.UShortValue}");
+                    break;
+                case GenericDataType.Float:
+                    Debug.Log($"{value.FloatValue}");
+                    break;
+                case GenericDataType.Int:
+                    Debug.Log($"{value.IntValue}");
+                    break;
+                case GenericDataType.UInt:
+                    Debug.Log($"{value.UIntValue}");
+                    break;
+                case GenericDataType.Double:
+                    Debug.Log($"{value.DoubleValue}");
+                    break;
+                case GenericDataType.Long:
+                    Debug.Log($"{value.LongValue}");
+                    break;
+                case GenericDataType.ULong:
+                    Debug.Log($"{value.ULongValue}");
+                    break;
+                case GenericDataType.Byte:
+                    Debug.Log($"{value.ByteValue}");
+                    break;
+                case GenericDataType.Bool:
+                    Debug.Log($"{value.BoolValue}");
+                    break;
+                case GenericDataType.None:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
+            }
+        }
+        
+        public static void PrintGenericValue(this GenericUnionValue value, GenericDataType dataType, FixedString128Bytes msg)
+        {
+            switch (dataType)
+            {
+                case GenericDataType.Half:
+                    Debug.Log($"{msg}: {value.HalfValue}");
+                    break;
+                case GenericDataType.Short:
+                    Debug.Log($"{msg}: {value.ShortValue}");
+                    break;
+                case GenericDataType.UShort:
+                    Debug.Log($"{msg}: {value.UShortValue}");
+                    break;
+                case GenericDataType.Float:
+                    Debug.Log($"{msg}: {value.FloatValue}");
+                    break;
+                case GenericDataType.Int:
+                    Debug.Log($"{msg}: {value.IntValue}");
+                    break;
+                case GenericDataType.UInt:
+                    Debug.Log($"{msg}: {value.UIntValue}");
+                    break;
+                case GenericDataType.Double:
+                    Debug.Log($"{msg}: {value.DoubleValue}");
+                    break;
+                case GenericDataType.Long:
+                    Debug.Log($"{msg}: {value.LongValue}");
+                    break;
+                case GenericDataType.ULong:
+                    Debug.Log($"{msg}: {value.ULongValue}");
+                    break;
+                case GenericDataType.Byte:
+                    Debug.Log($"{msg}: {value.ByteValue}");
+                    break;
+                case GenericDataType.Bool:
+                    Debug.Log($"{msg}: {value.BoolValue}");
+                    break;
+                case GenericDataType.None:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
+            }
         }
     }
 }
