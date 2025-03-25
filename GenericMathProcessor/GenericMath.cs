@@ -148,6 +148,49 @@ namespace NZCore
             };
         }
         
+        public static void Process(this MathOperator mathOperator, GenericDataType dataType, ref GenericUnionValue leftValue, GenericUnionValue rightValue)
+        {
+            switch (dataType)
+            {
+                case GenericDataType.Short:
+                    leftValue.ShortValue = mathOperator.ProcessReturnValue(leftValue.ShortValue, rightValue.ShortValue);
+                    break;
+                case GenericDataType.UShort:
+                    leftValue.UShortValue = mathOperator.ProcessReturnValue(leftValue.UShortValue, rightValue.UShortValue);
+                    break;
+                case GenericDataType.Half:
+                    leftValue.HalfValue = mathOperator.ProcessReturnValue(leftValue.HalfValue, rightValue.HalfValue);
+                    break;
+                case GenericDataType.Float:
+                    leftValue.FloatValue = mathOperator.ProcessReturnValue(leftValue.FloatValue, rightValue.FloatValue);
+                    break;
+                case GenericDataType.Int:
+                    leftValue.IntValue = mathOperator.ProcessReturnValue(leftValue.IntValue, rightValue.IntValue);
+                    break;
+                case GenericDataType.UInt:
+                    leftValue.UIntValue = mathOperator.ProcessReturnValue(leftValue.UIntValue, rightValue.UIntValue);
+                    break;
+                case GenericDataType.Double:
+                    leftValue.DoubleValue = mathOperator.ProcessReturnValue(leftValue.DoubleValue, rightValue.DoubleValue);
+                    break;
+                case GenericDataType.ULong:
+                    leftValue.ULongValue = mathOperator.ProcessReturnValue(leftValue.ULongValue, rightValue.ULongValue);
+                    break;
+                case GenericDataType.Long:
+                    leftValue.LongValue = mathOperator.ProcessReturnValue(leftValue.LongValue, rightValue.LongValue);
+                    break;
+                case GenericDataType.Byte:
+                    leftValue.ByteValue = mathOperator.ProcessReturnValue(leftValue.ByteValue, rightValue.ByteValue);
+                    break;
+                case GenericDataType.Bool:
+                    leftValue.BoolValue = mathOperator.ProcessReturnValue(leftValue.ByteValue, rightValue.ByteValue) > 0;
+                    break;
+                case GenericDataType.None:
+                default:
+                    throw new ArgumentOutOfRangeException($"For dataType {dataType}");
+            }
+        }
+        
         public static GenericUnionValue ProcessReturnValue(this MathOperator mathOperator, GenericDataType dataType, GenericUnionValue leftValue, GenericUnionValue rightValue)
         {
             switch (dataType)
