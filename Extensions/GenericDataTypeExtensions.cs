@@ -255,38 +255,70 @@ namespace NZCore
             switch (dataType)
             {
                 case GenericDataType.Half:
-                    Debug.Log($"{msg}: {value.HalfValue}");
+                    Debug.Log($"{msg} {value.HalfValue}");
                     break;
                 case GenericDataType.Short:
-                    Debug.Log($"{msg}: {value.ShortValue}");
+                    Debug.Log($"{msg} {value.ShortValue}");
                     break;
                 case GenericDataType.UShort:
-                    Debug.Log($"{msg}: {value.UShortValue}");
+                    Debug.Log($"{msg} {value.UShortValue}");
                     break;
                 case GenericDataType.Float:
-                    Debug.Log($"{msg}: {value.FloatValue}");
+                    Debug.Log($"{msg} {value.FloatValue}");
                     break;
                 case GenericDataType.Int:
-                    Debug.Log($"{msg}: {value.IntValue}");
+                    Debug.Log($"{msg} {value.IntValue}");
                     break;
                 case GenericDataType.UInt:
-                    Debug.Log($"{msg}: {value.UIntValue}");
+                    Debug.Log($"{msg} {value.UIntValue}");
                     break;
                 case GenericDataType.Double:
-                    Debug.Log($"{msg}: {value.DoubleValue}");
+                    Debug.Log($"{msg} {value.DoubleValue}");
                     break;
                 case GenericDataType.Long:
-                    Debug.Log($"{msg}: {value.LongValue}");
+                    Debug.Log($"{msg} {value.LongValue}");
                     break;
                 case GenericDataType.ULong:
-                    Debug.Log($"{msg}: {value.ULongValue}");
+                    Debug.Log($"{msg} {value.ULongValue}");
                     break;
                 case GenericDataType.Byte:
-                    Debug.Log($"{msg}: {value.ByteValue}");
+                    Debug.Log($"{msg} {value.ByteValue}");
                     break;
                 case GenericDataType.Bool:
-                    Debug.Log($"{msg}: {value.BoolValue}");
+                    Debug.Log($"{msg} {value.BoolValue}");
                     break;
+                case GenericDataType.None:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
+            }
+        }
+        
+        public static string ToString(this GenericUnionValue value, GenericDataType dataType)
+        {
+            switch (dataType)
+            {
+                case GenericDataType.Half:
+                    return $"{value.HalfValue}";
+                case GenericDataType.Short:
+                    return$"{value.ShortValue}";
+                case GenericDataType.UShort:
+                    return$"{value.UShortValue}";
+                case GenericDataType.Float:
+                    return$"{value.FloatValue}";
+                case GenericDataType.Int:
+                    return$"{value.IntValue}";
+                case GenericDataType.UInt:
+                    return$"{value.UIntValue}";
+                case GenericDataType.Double:
+                    return$"{value.DoubleValue}";
+                case GenericDataType.Long:
+                    return$"{value.LongValue}";
+                case GenericDataType.ULong:
+                    return$"{value.ULongValue}";
+                case GenericDataType.Byte:
+                    return$"{value.ByteValue}";
+                case GenericDataType.Bool:
+                    return$"{value.BoolValue}";
                 case GenericDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
