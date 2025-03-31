@@ -3,6 +3,7 @@
 // </copyright>
 
 using System;
+using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -522,6 +523,84 @@ namespace NZCore
             }
 
             return false;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ProcessWithMinMax(
+            this MathOperator mathOperator,
+            GenericDataType dataType,
+            byte* valuePtr,
+            byte* cappedValuePtr,
+            byte* inputValuePtr)
+        {
+            switch (dataType)
+            {
+                case GenericDataType.Short:
+                {
+                    mathOperator.ProcessWithMinMax<short, GenericMathProcessor.ShortProcessor>(valuePtr, *(short*) inputValuePtr, 0, *(short*)cappedValuePtr);
+
+                    break;
+                }
+                case GenericDataType.UShort:
+                {
+                    mathOperator.ProcessWithMinMax<ushort, GenericMathProcessor.UShortProcessor>(
+                        valuePtr, *(ushort*) inputValuePtr, 0, *(ushort*)cappedValuePtr);
+
+                    break;
+                }
+                case GenericDataType.Half:
+                {
+                    mathOperator.ProcessWithMinMax<half, GenericMathProcessor.HalfProcessor>(
+                        valuePtr, *(half*) inputValuePtr, (half)0, *(half*)cappedValuePtr);
+                    break;
+                }
+                case GenericDataType.Float:
+                {
+                    mathOperator.ProcessWithMinMax<float, GenericMathProcessor.FloatProcessor>(
+                        valuePtr, *(float*) inputValuePtr, 0, *(float*)cappedValuePtr);
+                    break;
+                }
+                case GenericDataType.Int:
+                {
+                    mathOperator.ProcessWithMinMax<int, GenericMathProcessor.IntProcessor>(
+                        valuePtr, *(int*) inputValuePtr, 0, *(int*)cappedValuePtr);
+                    break;
+                }
+                case GenericDataType.UInt:
+                {
+                    mathOperator.ProcessWithMinMax<uint, GenericMathProcessor.UIntProcessor>(
+                        valuePtr, *(uint*) inputValuePtr, 0, *(uint*)cappedValuePtr);
+                    break;
+                }
+                case GenericDataType.Double:
+                {
+                    mathOperator.ProcessWithMinMax<double, GenericMathProcessor.DoubleProcessor>(
+                        valuePtr, *(double*) inputValuePtr, 0, *(double*)cappedValuePtr);
+                    break;
+                }
+                case GenericDataType.Long:
+                {
+                    mathOperator.ProcessWithMinMax<long, GenericMathProcessor.LongProcessor>(
+                        valuePtr, *(long*) inputValuePtr, 0, *(long*)cappedValuePtr);
+                    break;
+                }
+                case GenericDataType.ULong:
+                {
+                    mathOperator.ProcessWithMinMax<ulong, GenericMathProcessor.ULongProcessor>(
+                        valuePtr, *(ulong*) inputValuePtr, 0, *(ulong*)cappedValuePtr);
+                    break;
+                }
+                case GenericDataType.Byte:
+                {
+                    mathOperator.ProcessWithMinMax<byte, GenericMathProcessor.ByteProcessor>(
+                        valuePtr, *(byte*) inputValuePtr, 0, *cappedValuePtr);
+                    break;
+                }
+                case GenericDataType.Bool:
+                case GenericDataType.None:
+                default:
+                    break;
+            }
         }
 
         // TODO wait until .NET6 arrives in Unity :)
