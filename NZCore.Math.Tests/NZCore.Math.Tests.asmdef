@@ -6,13 +6,18 @@
         "Unity.Collections",
         "Unity.Entities",
         "NZCore",
-        "NZCore.Math"
+        "NZCore.Math",
+        "UnityEngine.UI"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
     "overrideReferences": false,
-    "precompiledReferences": [],
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [
         "UNITY_EDITOR"

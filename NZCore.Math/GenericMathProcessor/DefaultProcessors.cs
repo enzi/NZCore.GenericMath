@@ -59,16 +59,16 @@ namespace NZCore
         public partial struct ULongProcessor : IGenericValueCalculator<ulong> { }
 
         [ReplaceMathMethod(
-            "math.pow(a, b)", "a.Pow(b)",
-            "math.pow(b, a)", "b.Pow(a)",
-            "math.min(a, b)", "a.Min(b)",
-            "math.max(a, b)", "a.Max(b)",
-            "math.abs(a)", "a.Abs()",
-            "math.ceil(a)", "a.Ceil()",
-            "math.floor(a)", "a.Floor()",
-            "math.round(a)", "a.Round()",
-            "math.log10(a)", "a.Log10()",
-            "math.log(a)", "a.Log2()",
+            "math.pow(a, b)", "BigDouble.Pow(a, (double) b)",
+            "math.pow(b, a)", "BigDouble.Pow(b, (double) a)",
+            "math.min(a, b)", "BigDouble.Min(a, b)",
+            "math.max(a, b)", "BigDouble.Max(a, b)",
+            "math.abs(a)", "BigDouble.Abs(a)",
+            "math.ceil(a)", "BigDouble.Ceil(a)",
+            "math.floor(a)", "BigDouble.Floor(a)",
+            "math.round(a)", "BigDouble.Round(a)",
+            "math.log10(a)", "BigDouble.Log10(a)",
+            "math.log(a)", "BigDouble.Log2(a)",
             "((int)a & (int)b) == (int)b", "false")] // HasFlag not implemented
         public partial struct BigDoubleProcessor : IGenericValueCalculator<BigDouble> { }
     }

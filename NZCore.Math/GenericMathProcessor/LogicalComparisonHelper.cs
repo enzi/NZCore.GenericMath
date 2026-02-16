@@ -10,33 +10,22 @@ namespace NZCore
     {
         public static bool LogicalComparison(this ConditionLogicValueComparison logicValueComparison, GenericDataType dataType, GenericUnionValue leftValue, GenericUnionValue rightValue)
         {
-            switch (dataType)
+            return dataType switch
             {
-                case GenericDataType.Short:
-                    return logicValueComparison.LogicalComparison(leftValue.ShortValue, rightValue.ShortValue);
-                case GenericDataType.UShort:
-                    return logicValueComparison.LogicalComparison(leftValue.UShortValue, rightValue.UShortValue);
-                case GenericDataType.Half:
-                    return logicValueComparison.LogicalComparison(leftValue.HalfValue, rightValue.HalfValue);
-                case GenericDataType.Float:
-                    return logicValueComparison.LogicalComparison(leftValue.FloatValue, rightValue.FloatValue);
-                case GenericDataType.Int:
-                    return logicValueComparison.LogicalComparison(leftValue.IntValue, rightValue.IntValue);
-                case GenericDataType.UInt:
-                    return logicValueComparison.LogicalComparison(leftValue.UIntValue, rightValue.UIntValue);
-                case GenericDataType.Double:
-                    return logicValueComparison.LogicalComparison(leftValue.DoubleValue, rightValue.DoubleValue);
-                case GenericDataType.ULong:
-                    return logicValueComparison.LogicalComparison(leftValue.ULongValue, rightValue.ULongValue);
-                case GenericDataType.Long:
-                    return logicValueComparison.LogicalComparison(leftValue.LongValue, rightValue.LongValue);
-                case GenericDataType.Byte:
-                    return logicValueComparison.LogicalComparison(leftValue.ByteValue, rightValue.ByteValue);
-                case GenericDataType.Bool:
-                case GenericDataType.None:
-                default:
-                    throw new ArgumentOutOfRangeException($"For Key {dataType}");
-            }
+                GenericDataType.BigDouble => logicValueComparison.LogicalComparison(leftValue.BigDoubleValue, rightValue.BigDoubleValue),
+                GenericDataType.Short => logicValueComparison.LogicalComparison(leftValue.ShortValue, rightValue.ShortValue),
+                GenericDataType.UShort => logicValueComparison.LogicalComparison(leftValue.UShortValue, rightValue.UShortValue),
+                GenericDataType.Half => logicValueComparison.LogicalComparison(leftValue.HalfValue, rightValue.HalfValue),
+                GenericDataType.Float => logicValueComparison.LogicalComparison(leftValue.FloatValue, rightValue.FloatValue),
+                GenericDataType.Int => logicValueComparison.LogicalComparison(leftValue.IntValue, rightValue.IntValue),
+                GenericDataType.UInt => logicValueComparison.LogicalComparison(leftValue.UIntValue, rightValue.UIntValue),
+                GenericDataType.Double => logicValueComparison.LogicalComparison(leftValue.DoubleValue, rightValue.DoubleValue),
+                GenericDataType.ULong => logicValueComparison.LogicalComparison(leftValue.ULongValue, rightValue.ULongValue),
+                GenericDataType.Long => logicValueComparison.LogicalComparison(leftValue.LongValue, rightValue.LongValue),
+                GenericDataType.Byte => logicValueComparison.LogicalComparison(leftValue.ByteValue, rightValue.ByteValue),
+                GenericDataType.Bool or GenericDataType.None => throw new ArgumentOutOfRangeException($"For Key {dataType}"),
+                _ => throw new ArgumentOutOfRangeException($"For Key {dataType}")
+            };
         }
     }
 }
