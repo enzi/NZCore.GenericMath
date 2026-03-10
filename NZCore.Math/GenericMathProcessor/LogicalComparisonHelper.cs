@@ -12,7 +12,9 @@ namespace NZCore
         {
             return dataType switch
             {
+#if BIGDOUBLE
                 GenericDataType.BigDouble => logicValueComparison.LogicalComparison(leftValue.BigDoubleValue, rightValue.BigDoubleValue),
+#endif
                 GenericDataType.Short => logicValueComparison.LogicalComparison(leftValue.ShortValue, rightValue.ShortValue),
                 GenericDataType.UShort => logicValueComparison.LogicalComparison(leftValue.UShortValue, rightValue.UShortValue),
                 GenericDataType.Half => logicValueComparison.LogicalComparison(leftValue.HalfValue, rightValue.HalfValue),

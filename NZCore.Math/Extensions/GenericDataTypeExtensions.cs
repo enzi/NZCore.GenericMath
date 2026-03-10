@@ -32,9 +32,11 @@ namespace NZCore
         {
             switch (dataType)
             {
+#if BIGDOUBLE
                 case GenericDataType.BigDouble:
                     buffer.AddToByteBuffer(value.BigDoubleValue);
                     break;
+#endif
                 case GenericDataType.Short:
                     buffer.AddToByteBuffer(value.ShortValue);
                     break;
@@ -258,9 +260,11 @@ namespace NZCore
                 case GenericDataType.Bool:
                     Debug.Log($"{value.BoolValue}");
                     break;
+#if BIGDOUBLE
                 case GenericDataType.BigDouble:
                     Debug.Log($"{value.BigDoubleValue}");
                     break;
+#endif
                 case GenericDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
@@ -304,8 +308,10 @@ namespace NZCore
                 case GenericDataType.Bool:
                     Debug.Log($"{msg} {value.BoolValue}");
                     break;
+#if BIGDOUBLE
                 case GenericDataType.BigDouble:
                     Debug.Log($"{msg} {value.BigDoubleValue}");
+#endif
                     break;
                 case GenericDataType.None:
                 default:
@@ -339,8 +345,10 @@ namespace NZCore
                     return$"{value.ByteValue}";
                 case GenericDataType.Bool:
                     return$"{value.BoolValue}";
+#if BIGDOUBLE
                 case GenericDataType.BigDouble:
                     return $"{value.BigDoubleValue}";
+#endif
                 case GenericDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
