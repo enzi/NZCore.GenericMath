@@ -11,12 +11,12 @@ namespace NZCore
         [SerializeField] private double _mantissa;
         [SerializeField] private long _exponent;
 
-        public static readonly BigDouble Zero = new BigDouble(0, 0);
-        public static readonly BigDouble One = new BigDouble(1, 0);
-        public static readonly BigDouble Ten = new BigDouble(1, 1);
-        public static readonly BigDouble NegativeOne = new BigDouble(-1, 0);
-        public static readonly BigDouble NaN = new BigDouble(double.NaN, long.MinValue);
-        
+        public static readonly BigDouble Zero = new(0, 0);
+        public static readonly BigDouble One = new(1, 0);
+        public static readonly BigDouble Ten = new(1, 1);
+        public static readonly BigDouble NegativeOne = new(-1, 0);
+        public static readonly BigDouble NaN = new(double.NaN, long.MinValue);
+
         public const long DoubleExpMin = -324;
         public const long DoubleExpMax = 308;
         public const double LOG2_10 = 3.32192809488736234787;
@@ -24,30 +24,28 @@ namespace NZCore
 
         public double Mantissa => _mantissa;
         public long Exponent => _exponent;
-        
+
         public bool IsZero => _mantissa == 0;
         public bool IsNaN => double.IsNaN(_mantissa);
-        
-        
+
+
         public bool IsFinite(double value) => !double.IsNaN(value) && !double.IsInfinity(value);
 
         // used for skipping normalize
-        private static BigDouble ConstructRaw(double mantissa, long exponent)
-        {
-            return new BigDouble
+        private static BigDouble ConstructRaw(double mantissa, long exponent) =>
+            new()
             {
                 _mantissa = mantissa,
                 _exponent = exponent
             };
-        }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public BigDouble(BigDouble value)
         {
             _mantissa = value._mantissa;
             _exponent = value._exponent;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public BigDouble(double mantissa, long exponent)
         {
@@ -97,9 +95,9 @@ namespace NZCore
                 }
                 else
                 {
-                    _mantissa /= PowersOf10.Lookup(shift);    
+                    _mantissa /= PowersOf10.Lookup(shift);
                 }
-                
+
                 _exponent += shift;
 
                 // Guard against floating-point drift
@@ -121,6 +119,6 @@ namespace NZCore
                 _mantissa = 0;
                 _exponent = 0;
             }
-        }       
+        }
     }
 }

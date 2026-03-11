@@ -8,7 +8,8 @@ namespace NZCore
 {
     public static class LogicalComparisonHelper
     {
-        public static bool LogicalComparison(this ConditionLogicValueComparison logicValueComparison, GenericDataType dataType, GenericUnionValue leftValue, GenericUnionValue rightValue)
+        public static bool LogicalComparison(this ConditionLogicValueComparison logicValueComparison, GenericDataType dataType, GenericUnionValue leftValue,
+            GenericUnionValue rightValue)
         {
             return dataType switch
             {

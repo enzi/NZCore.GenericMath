@@ -8,9 +8,6 @@ namespace NZCore
 {
     public static class FloatExtensions
     {
-        public static float RoundToOneDecimal(this float value)
-        {
-            return math.round(value * 10f) / 10f;
-        }
+        public static float RoundToOneDecimal(this float value) => math.round(value * 10f) / 10f;
     }
 }

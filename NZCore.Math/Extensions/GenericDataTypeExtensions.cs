@@ -83,7 +83,7 @@ namespace NZCore
             var typeSize = UnsafeUtility.SizeOf<T>();
             Assert.AreEqual(typeSize, 1, $"AddStat -> {nameof(T)} needs to be size 1!");
 #endif
-            
+
             switch (dataType)
             {
                 case GenericDataType.Bool:
@@ -104,7 +104,7 @@ namespace NZCore
                 }
                 case GenericDataType.Half:
                 {
-                    buffer.AddToByteBuffer((half) float.Parse(value));
+                    buffer.AddToByteBuffer((half)float.Parse(value));
                     break;
                 }
                 case GenericDataType.Float:
@@ -151,7 +151,7 @@ namespace NZCore
                     throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
             }
         }
-        
+
         public static byte[] GetByteArray(this GenericDataType dataType, string value)
         {
             switch (dataType)
@@ -160,7 +160,7 @@ namespace NZCore
                     break;
                 case GenericDataType.Bool:
                 {
-                    return new [] { value != "0" ? (byte)1 : (byte)0 };
+                    return new[] { value != "0" ? (byte)1 : (byte)0 };
                 }
                 case GenericDataType.Byte:
                 {
@@ -168,52 +168,52 @@ namespace NZCore
                 }
                 case GenericDataType.Short:
                 {
-                    short tmpValue = short.Parse(value);
+                    var tmpValue = short.Parse(value);
                     return ByteHelper.GetBytes(tmpValue);
                 }
                 case GenericDataType.UShort:
                 {
-                    ushort tmpValue = ushort.Parse(value);
+                    var tmpValue = ushort.Parse(value);
                     return ByteHelper.GetBytes(tmpValue);
                 }
                 case GenericDataType.Half:
                 {
-                    half tmpValue = (half) float.Parse(value);
+                    var tmpValue = (half)float.Parse(value);
                     return ByteHelper.GetBytes(tmpValue);
                 }
                 case GenericDataType.Float:
                 {
-                    float tmpValue = float.Parse(value);
+                    var tmpValue = float.Parse(value);
                     return ByteHelper.GetBytes(tmpValue);
                 }
                 case GenericDataType.Int:
                 {
-                    int tmpValue = int.Parse(value);
+                    var tmpValue = int.Parse(value);
                     return ByteHelper.GetBytes(tmpValue);
                 }
                 case GenericDataType.UInt:
                 {
-                    uint tmpValue = uint.Parse(value);
+                    var tmpValue = uint.Parse(value);
                     return ByteHelper.GetBytes(tmpValue);
                 }
                 case GenericDataType.Double:
                 {
-                    double tmpValue = double.Parse(value);
+                    var tmpValue = double.Parse(value);
                     return ByteHelper.GetBytes(tmpValue);
                 }
                 case GenericDataType.Long:
                 {
-                    long tmpValue = long.Parse(value);
+                    var tmpValue = long.Parse(value);
                     return ByteHelper.GetBytes(tmpValue);
                 }
                 case GenericDataType.ULong:
                 {
-                    ulong tmpValue = ulong.Parse(value);
+                    var tmpValue = ulong.Parse(value);
                     return ByteHelper.GetBytes(tmpValue);
                 }
                 case GenericDataType.BigDouble:
                 {
-                    BigDouble tmpValue = BigDouble.Parse(value);
+                    var tmpValue = BigDouble.Parse(value);
                     return ByteHelper.GetBytes(tmpValue);
                 }
                 default:
@@ -270,7 +270,7 @@ namespace NZCore
                     throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
             }
         }
-        
+
         public static void PrintGenericValue(this GenericUnionValue value, GenericDataType dataType, FixedString128Bytes msg)
         {
             switch (dataType)
@@ -318,7 +318,7 @@ namespace NZCore
                     throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
             }
         }
-        
+
         public static string ToString(this GenericUnionValue value, GenericDataType dataType)
         {
             switch (dataType)
@@ -326,25 +326,25 @@ namespace NZCore
                 case GenericDataType.Half:
                     return $"{value.HalfValue}";
                 case GenericDataType.Short:
-                    return$"{value.ShortValue}";
+                    return $"{value.ShortValue}";
                 case GenericDataType.UShort:
-                    return$"{value.UShortValue}";
+                    return $"{value.UShortValue}";
                 case GenericDataType.Float:
-                    return$"{value.FloatValue}";
+                    return $"{value.FloatValue}";
                 case GenericDataType.Int:
-                    return$"{value.IntValue}";
+                    return $"{value.IntValue}";
                 case GenericDataType.UInt:
-                    return$"{value.UIntValue}";
+                    return $"{value.UIntValue}";
                 case GenericDataType.Double:
-                    return$"{value.DoubleValue}";
+                    return $"{value.DoubleValue}";
                 case GenericDataType.Long:
-                    return$"{value.LongValue}";
+                    return $"{value.LongValue}";
                 case GenericDataType.ULong:
-                    return$"{value.ULongValue}";
+                    return $"{value.ULongValue}";
                 case GenericDataType.Byte:
-                    return$"{value.ByteValue}";
+                    return $"{value.ByteValue}";
                 case GenericDataType.Bool:
-                    return$"{value.BoolValue}";
+                    return $"{value.BoolValue}";
 #if BIGDOUBLE
                 case GenericDataType.BigDouble:
                     return $"{value.BigDoubleValue}";

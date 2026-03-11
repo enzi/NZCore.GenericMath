@@ -26,16 +26,18 @@ namespace NZCore
         public ReplaceMathMethodAttribute(params string[] replacements)
         {
             if (replacements.Length % 2 != 0)
+            {
                 throw new ArgumentException("Replacements must be provided in pairs (oldValue, newValue)");
+            }
 
             Replacements = new MathMethodReplacement[replacements.Length / 2];
-            for (int i = 0; i < replacements.Length; i += 2)
+            for (var i = 0; i < replacements.Length; i += 2)
             {
                 Replacements[i / 2] = new MathMethodReplacement(replacements[i], replacements[i + 1]);
             }
         }
     }
-    
+
     public static partial class GenericMathProcessor
     {
         public partial struct ByteProcessor : IGenericValueCalculator<byte> { }

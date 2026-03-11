@@ -20,7 +20,7 @@ namespace NZCore
                 return a;
             }
 
-            long expDiff = a._exponent - b._exponent;
+            var expDiff = a._exponent - b._exponent;
 
             if (expDiff > NegligibleExponentDiff)
             {
@@ -51,33 +51,18 @@ namespace NZCore
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BigDouble operator -(BigDouble a, BigDouble b)
-        {
-            return a + new BigDouble(-b._mantissa, b._exponent);
-        }
+        public static BigDouble operator -(BigDouble a, BigDouble b) => a + new BigDouble(-b._mantissa, b._exponent);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BigDouble operator *(BigDouble a, BigDouble b)
-        {
-            return new BigDouble(a._mantissa * b._mantissa, a._exponent + b._exponent);
-        }
+        public static BigDouble operator *(BigDouble a, BigDouble b) => new(a._mantissa * b._mantissa, a._exponent + b._exponent);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BigDouble operator /(BigDouble a, BigDouble b)
-        {
-            return new BigDouble(a._mantissa / b._mantissa, a._exponent - b._exponent);
-        }
+        public static BigDouble operator /(BigDouble a, BigDouble b) => new(a._mantissa / b._mantissa, a._exponent - b._exponent);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BigDouble operator -(BigDouble a)
-        {
-            return new BigDouble(-a._mantissa, a._exponent);
-        }
+        public static BigDouble operator -(BigDouble a) => new(-a._mantissa, a._exponent);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BigDouble operator +(BigDouble a)
-        {
-            return a;
-        }
+        public static BigDouble operator +(BigDouble a) => a;
     }
 }

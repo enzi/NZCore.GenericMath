@@ -29,7 +29,7 @@ namespace NZCore
         // 8 bits
         Byte,
         Bool,
-        
+
         // 128 bits
         BigDouble
     }

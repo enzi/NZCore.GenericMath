@@ -8,20 +8,20 @@ namespace NZCore
 {
     public partial struct BigDouble
     {
-        public static implicit operator BigDouble(byte value) => new BigDouble(value);
-        public static implicit operator BigDouble(sbyte value) => new BigDouble(value);
-        public static implicit operator BigDouble(short value) => new BigDouble(value);
-        public static implicit operator BigDouble(ushort value) => new BigDouble(value);
-        public static implicit operator BigDouble(int value) => new BigDouble(value);
-        public static implicit operator BigDouble(uint value) => new BigDouble(value);
-        public static implicit operator BigDouble(long value) => new BigDouble(value);
-        public static implicit operator BigDouble(ulong value) => new BigDouble(value);
-        public static implicit operator BigDouble(float value) => new BigDouble(value);
-        public static implicit operator BigDouble(double value) => new BigDouble(value);
-        public static implicit operator BigDouble(decimal value) => new BigDouble((double)value);
-        public static implicit operator BigDouble(half value) => new BigDouble((float)value);
+        public static implicit operator BigDouble(byte value) => new(value);
+        public static implicit operator BigDouble(sbyte value) => new(value);
+        public static implicit operator BigDouble(short value) => new(value);
+        public static implicit operator BigDouble(ushort value) => new(value);
+        public static implicit operator BigDouble(int value) => new(value);
+        public static implicit operator BigDouble(uint value) => new(value);
+        public static implicit operator BigDouble(long value) => new(value);
+        public static implicit operator BigDouble(ulong value) => new(value);
+        public static implicit operator BigDouble(float value) => new(value);
+        public static implicit operator BigDouble(double value) => new(value);
+        public static implicit operator BigDouble(decimal value) => new((double)value);
+        public static implicit operator BigDouble(half value) => new((float)value);
         public static implicit operator half(BigDouble value) => (half)(float)value.ToDouble();
-        
+
         public static explicit operator float(BigDouble value) => (float)value.ToDouble();
         public static explicit operator double(BigDouble value) => value.ToDouble();
 
@@ -73,8 +73,6 @@ namespace NZCore
             return d >= ulong.MinValue && d <= ulong.MaxValue ? (ulong)d : 0UL;
         }
 
-        
-      
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public double ToDouble()
@@ -118,7 +116,7 @@ namespace NZCore
 
             if (value == "NaN")
             {
-                return BigDouble.NaN;
+                return NaN;
             }
 
             var result = new BigDouble(double.Parse(value, CultureInfo.InvariantCulture));

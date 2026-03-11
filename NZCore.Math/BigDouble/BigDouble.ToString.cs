@@ -18,7 +18,11 @@ namespace NZCore
 
             if (_exponent == long.MaxValue)
             {
-                if (_mantissa < 0) fs.Append('-');
+                if (_mantissa < 0)
+                {
+                    fs.Append('-');
+                }
+
                 fs.Append('I');
                 fs.Append('n');
                 fs.Append('f');
@@ -28,15 +32,15 @@ namespace NZCore
             // For small numbers, output as plain decimal
             if (_exponent >= 0 && _exponent < 6)
             {
-                double fullValue = _mantissa * Pow10(_exponent);
+                var fullValue = _mantissa * Pow10(_exponent);
                 AppendDouble(ref fs, fullValue, 2);
                 return fs;
             }
 
             if (_exponent < 0 && _exponent > -4)
             {
-                double fullValue = _mantissa * Pow10(_exponent);
-                AppendDouble(ref fs, fullValue, (int)(-_exponent) + 2);
+                var fullValue = _mantissa * Pow10(_exponent);
+                AppendDouble(ref fs, fullValue, (int)-_exponent + 2);
                 return fs;
             }
 
@@ -48,10 +52,7 @@ namespace NZCore
             return fs;
         }
 
-        public override string ToString()
-        {
-            return ToFixedString().ToString();
-        }
+        public override string ToString() => ToFixedString().ToString();
 
         private static void AppendDouble(ref FixedString128Bytes fs, double value, int decimalPlaces)
         {
@@ -61,16 +62,19 @@ namespace NZCore
                 value = -value;
             }
 
-            long intPart = (long)value;
+            var intPart = (long)value;
             AppendLong(ref fs, intPart);
 
             if (decimalPlaces > 0)
             {
-                double frac = value - intPart;
-                if (frac < 0) frac = 0;
+                var frac = value - intPart;
+                if (frac < 0)
+                {
+                    frac = 0;
+                }
 
-                double multiplier = Pow10(decimalPlaces);
-                long fracInt = (long)math.round(frac * multiplier);
+                var multiplier = Pow10(decimalPlaces);
+                var fracInt = (long)math.round(frac * multiplier);
 
                 // Handle rounding up past the decimal places
                 if (fracInt >= (long)multiplier)
@@ -92,15 +96,15 @@ namespace NZCore
                     fs.Append('.');
 
                     // Leading zeros in fractional part
-                    long temp = fracInt;
-                    int digits = 0;
+                    var temp = fracInt;
+                    var digits = 0;
                     while (temp > 0)
                     {
                         digits++;
                         temp /= 10;
                     }
 
-                    for (int i = 0; i < decimalPlaces - digits; i++)
+                    for (var i = 0; i < decimalPlaces - digits; i++)
                     {
                         fs.Append('0');
                     }
@@ -121,6 +125,7 @@ namespace NZCore
                     fs.Append((FixedString32Bytes)"9223372036854775808");
                     return;
                 }
+
                 value = -value;
             }
 
@@ -131,7 +136,7 @@ namespace NZCore
             }
 
             // Max long is 19 digits
-            int start = fs.Length;
+            var start = fs.Length;
             while (value > 0)
             {
                 fs.Append((char)('0' + (int)(value % 10)));
@@ -139,10 +144,10 @@ namespace NZCore
             }
 
             // Reverse the digits we just wrote
-            int end = fs.Length - 1;
+            var end = fs.Length - 1;
             while (start < end)
             {
-                byte tmp = fs[start];
+                var tmp = fs[start];
                 fs[start] = fs[end];
                 fs[end] = tmp;
                 start++;

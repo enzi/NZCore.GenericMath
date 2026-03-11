@@ -11,33 +11,18 @@ namespace NZCore
     public partial struct BigDouble
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Log10(BigDouble value)
-        {
-            return value._exponent + math.log10(value._mantissa);
-        }
+        public static double Log10(BigDouble value) => value._exponent + math.log10(value._mantissa);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double AbsLog10(BigDouble value)
-        {
-            return value._exponent + math.log10(math.abs(value._mantissa));
-        }
+        public static double AbsLog10(BigDouble value) => value._exponent + math.log10(math.abs(value._mantissa));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Log(BigDouble value, BigDouble @base)
-        {
-            return Ln(value) / math.log((double)@base);
-        }
+        public static double Log(BigDouble value, BigDouble @base) => Ln(value) / math.log((double)@base);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Log(BigDouble value, double @base)
-        {
-            return Ln(value) / math.log(@base);
-        }
+        public static double Log(BigDouble value, double @base) => Ln(value) / math.log(@base);
 
-        public static double Log2(BigDouble value)
-        {
-            return LOG2_10 * Log10(value);
-        }
+        public static double Log2(BigDouble value) => LOG2_10 * Log10(value);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Ln(BigDouble value)
@@ -50,10 +35,7 @@ namespace NZCore
             return math.log(value._mantissa) + value._exponent * math.LN10_DBL; // ln(10)
         }
 
-        public static BigDouble Pow(BigDouble value, BigDouble power)
-        {
-            return Pow(value, (long)power);
-        }
+        public static BigDouble Pow(BigDouble value, BigDouble power) => Pow(value, (long)power);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static BigDouble Pow(BigDouble value, long exp)
@@ -64,12 +46,12 @@ namespace NZCore
             }
 
             // 10^(exp * log10(base))
-            double log10 = Log10(value);
-            double newLog = exp * log10;
+            var log10 = Log10(value);
+            var newLog = exp * log10;
 
-            long newExponent = (long)math.floor(newLog);
-            double residual = newLog - newExponent;
-            double newMantissa = math.pow(10.0, residual);
+            var newExponent = (long)math.floor(newLog);
+            var residual = newLog - newExponent;
+            var newMantissa = math.pow(10.0, residual);
 
             return new BigDouble(newMantissa, newExponent);
         }
@@ -96,8 +78,8 @@ namespace NZCore
         public static BigDouble Exp(BigDouble value)
         {
             // e^value = 10^(value * log10(e))
-            double log10e = 0.4342944819032518; // log10(e)
-            double asDouble = (double)value;
+            var log10e = 0.4342944819032518; // log10(e)
+            var asDouble = (double)value;
 
             // For values that fit in double range, use direct computation
             if (value._exponent < 3)
@@ -106,19 +88,16 @@ namespace NZCore
             }
 
             // For large values, use log10 conversion
-            double newLog10 = asDouble * log10e;
-            long newExponent = (long)math.floor(newLog10);
-            double residual = newLog10 - newExponent;
-            double newMantissa = math.pow(10.0, residual);
+            var newLog10 = asDouble * log10e;
+            var newExponent = (long)math.floor(newLog10);
+            var residual = newLog10 - newExponent;
+            var newMantissa = math.pow(10.0, residual);
 
             return new BigDouble(newMantissa, newExponent);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BigDouble Abs(BigDouble value)
-        {
-            return new BigDouble(math.abs(value._mantissa), value._exponent);
-        }
+        public static BigDouble Abs(BigDouble value) => new(math.abs(value._mantissa), value._exponent);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static BigDouble Floor(BigDouble value)
@@ -147,7 +126,7 @@ namespace NZCore
         {
             if (value._exponent < 0)
             {
-                double full = value._mantissa * Pow10(value._exponent);
+                var full = value._mantissa * Pow10(value._exponent);
                 return new BigDouble(math.round(full));
             }
 
@@ -160,16 +139,10 @@ namespace NZCore
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BigDouble Min(BigDouble a, BigDouble b)
-        {
-            return a.CompareTo(b) <= 0 ? a : b;
-        }
+        public static BigDouble Min(BigDouble a, BigDouble b) => a.CompareTo(b) <= 0 ? a : b;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BigDouble Max(BigDouble a, BigDouble b)
-        {
-            return a.CompareTo(b) >= 0 ? a : b;
-        }
+        public static BigDouble Max(BigDouble a, BigDouble b) => a.CompareTo(b) >= 0 ? a : b;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static BigDouble Clamp(BigDouble value, BigDouble min, BigDouble max)
@@ -196,10 +169,7 @@ namespace NZCore
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static double Pow10(long exponent)
-        {
-            return PowersOf10.Lookup(exponent);
-        }
+        internal static double Pow10(long exponent) => PowersOf10.Lookup(exponent);
 
         public struct PowersOf10
         {
@@ -222,7 +192,7 @@ namespace NZCore
                 const int count = (int)(DoubleExpMax - DoubleExpMin);
                 Powers.Data = new NativeArray<double>(count, Allocator.Persistent);
 
-                for (int i = 0; i < count; i++)
+                for (var i = 0; i < count; i++)
                 {
                     Powers.Data[i] = double.Parse("1e" + (i - IndexOf0), CultureInfo.InvariantCulture);
                 }
@@ -231,7 +201,7 @@ namespace NZCore
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public static double Lookup(long power)
             {
-                long index = IndexOf0 + power;
+                var index = IndexOf0 + power;
                 if (index < 0 || index >= Powers.Data.Length)
                 {
                     return math.pow(10.0, power);

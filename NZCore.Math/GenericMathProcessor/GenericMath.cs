@@ -40,9 +40,8 @@ namespace NZCore
             //Debug.Log($"SET {leftValue} = {newValue}");
             value = newValue;
             return true;
-
         }
-        
+
         public static bool ProcessReturnChange<T, TProcessor>(this MathOperator mathOperator, ref T leftValue, T rightValue)
             where T : unmanaged, IEquatable<T>
             where TProcessor : struct, IGenericValueCalculator<T>
@@ -71,9 +70,8 @@ namespace NZCore
             //Debug.Log($"SET {leftValue} = {newValue}");
             leftValue = newValue;
             return true;
-
         }
-        
+
         public static unsafe bool ProcessWithMinMax<T, TProcessor>(this MathOperator mathOperator, byte* valuePtr, T changeValue, T minValue, T maxValue)
             where T : unmanaged, IEquatable<T>
             where TProcessor : struct, IGenericValueCalculator<T>
@@ -105,7 +103,7 @@ namespace NZCore
             value = newValue;
             return true;
         }
-        
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe void ProcessWithMinMax(
             this MathOperator mathOperator,
@@ -126,63 +124,63 @@ namespace NZCore
 #endif
                 case GenericDataType.Short:
                 {
-                    mathOperator.ProcessWithMinMax<short, GenericMathProcessor.ShortProcessor>(valuePtr, *(short*) changeValuePtr, 0, *(short*)cappedValuePtr);
+                    mathOperator.ProcessWithMinMax<short, GenericMathProcessor.ShortProcessor>(valuePtr, *(short*)changeValuePtr, 0, *(short*)cappedValuePtr);
 
                     break;
                 }
                 case GenericDataType.UShort:
                 {
                     mathOperator.ProcessWithMinMax<ushort, GenericMathProcessor.UShortProcessor>(
-                        valuePtr, *(ushort*) changeValuePtr, 0, *(ushort*)cappedValuePtr);
+                        valuePtr, *(ushort*)changeValuePtr, 0, *(ushort*)cappedValuePtr);
 
                     break;
                 }
                 case GenericDataType.Half:
                 {
                     mathOperator.ProcessWithMinMax<half, GenericMathProcessor.HalfProcessor>(
-                        valuePtr, *(half*) changeValuePtr, half.zero, *(half*)cappedValuePtr);
+                        valuePtr, *(half*)changeValuePtr, half.zero, *(half*)cappedValuePtr);
                     break;
                 }
                 case GenericDataType.Float:
                 {
                     mathOperator.ProcessWithMinMax<float, GenericMathProcessor.FloatProcessor>(
-                        valuePtr, *(float*) changeValuePtr, 0, *(float*)cappedValuePtr);
+                        valuePtr, *(float*)changeValuePtr, 0, *(float*)cappedValuePtr);
                     break;
                 }
                 case GenericDataType.Int:
                 {
                     mathOperator.ProcessWithMinMax<int, GenericMathProcessor.IntProcessor>(
-                        valuePtr, *(int*) changeValuePtr, 0, *(int*)cappedValuePtr);
+                        valuePtr, *(int*)changeValuePtr, 0, *(int*)cappedValuePtr);
                     break;
                 }
                 case GenericDataType.UInt:
                 {
                     mathOperator.ProcessWithMinMax<uint, GenericMathProcessor.UIntProcessor>(
-                        valuePtr, *(uint*) changeValuePtr, 0, *(uint*)cappedValuePtr);
+                        valuePtr, *(uint*)changeValuePtr, 0, *(uint*)cappedValuePtr);
                     break;
                 }
                 case GenericDataType.Double:
                 {
                     mathOperator.ProcessWithMinMax<double, GenericMathProcessor.DoubleProcessor>(
-                        valuePtr, *(double*) changeValuePtr, 0, *(double*)cappedValuePtr);
+                        valuePtr, *(double*)changeValuePtr, 0, *(double*)cappedValuePtr);
                     break;
                 }
                 case GenericDataType.Long:
                 {
                     mathOperator.ProcessWithMinMax<long, GenericMathProcessor.LongProcessor>(
-                        valuePtr, *(long*) changeValuePtr, 0, *(long*)cappedValuePtr);
+                        valuePtr, *(long*)changeValuePtr, 0, *(long*)cappedValuePtr);
                     break;
                 }
                 case GenericDataType.ULong:
                 {
                     mathOperator.ProcessWithMinMax<ulong, GenericMathProcessor.ULongProcessor>(
-                        valuePtr, *(ulong*) changeValuePtr, 0, *(ulong*)cappedValuePtr);
+                        valuePtr, *(ulong*)changeValuePtr, 0, *(ulong*)cappedValuePtr);
                     break;
                 }
                 case GenericDataType.Byte:
                 {
                     mathOperator.ProcessWithMinMax<byte, GenericMathProcessor.ByteProcessor>(
-                        valuePtr, *(byte*) changeValuePtr, 0, *cappedValuePtr);
+                        valuePtr, *(byte*)changeValuePtr, 0, *cappedValuePtr);
                     break;
                 }
                 case GenericDataType.Bool:
@@ -191,8 +189,8 @@ namespace NZCore
                     break;
             }
         }
-        
-          [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe void ProcessWithMinMax(
             this MathOperator mathOperator,
             GenericDataType dataType,
@@ -282,23 +280,19 @@ namespace NZCore
             where T : unmanaged, IEquatable<T>
             where TProcessor : struct, IGenericValueCalculator<T>
         {
-            ref T valueA = ref *(T*)valuePtrToA;
+            ref var valueA = ref *(T*)valuePtrToA;
             valueA = mathOperator.Process<T, TProcessor>(valueA, valuePtrToB);
         }
 
         public static unsafe T Process<T, TProcessor>(this MathOperator mathOperator, byte* valuePtrToA, T valueB)
             where T : unmanaged, IEquatable<T>
-            where TProcessor : struct, IGenericValueCalculator<T>
-        {
-            return mathOperator.Process<T, TProcessor>(*(T*)valuePtrToA, valueB);
-        }
+            where TProcessor : struct, IGenericValueCalculator<T> =>
+            mathOperator.Process<T, TProcessor>(*(T*)valuePtrToA, valueB);
 
         public static unsafe T Process<T, TProcessor>(this MathOperator mathOperator, T valueA, byte* valuePtrToB)
             where T : unmanaged, IEquatable<T>
-            where TProcessor : struct, IGenericValueCalculator<T>
-        {
-            return mathOperator.Process<T, TProcessor>(valueA, *(T*)valuePtrToB);
-        }
+            where TProcessor : struct, IGenericValueCalculator<T> =>
+            mathOperator.Process<T, TProcessor>(valueA, *(T*)valuePtrToB);
 
         public static T Process<T, TProcessor>(this MathOperator mathOperator, T valueA, T valueB)
             where T : unmanaged, IEquatable<T>
@@ -320,7 +314,7 @@ namespace NZCore
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
-        
+
         public static void Process(this MathOperator mathOperator, GenericDataType dataType, ref GenericUnionValue leftValue, GenericUnionValue rightValue)
         {
             switch (dataType)
@@ -368,8 +362,9 @@ namespace NZCore
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");
             }
         }
-        
-        public static GenericUnionValue ProcessReturnValue(this MathOperator mathOperator, GenericDataType dataType, GenericUnionValue leftValue, GenericUnionValue rightValue)
+
+        public static GenericUnionValue ProcessReturnValue(this MathOperator mathOperator, GenericDataType dataType, GenericUnionValue leftValue,
+            GenericUnionValue rightValue)
         {
             switch (dataType)
             {
@@ -440,7 +435,7 @@ namespace NZCore
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");
             }
         }
-        
+
         public static unsafe void Process(this MathOperator mathOperator, GenericDataType dataType, byte* valuePtr, GenericUnionValue value)
         {
             switch (dataType)
@@ -508,8 +503,9 @@ namespace NZCore
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");
             }
         }
-        
-        public static unsafe bool LogicalComparison(this ConditionLogicValueComparison logicValueComparison, GenericDataType dataType, byte* valueA, GenericUnionValue valueB)
+
+        public static unsafe bool LogicalComparison(this ConditionLogicValueComparison logicValueComparison, GenericDataType dataType, byte* valueA,
+            GenericUnionValue valueB)
         {
             switch (dataType)
             {
@@ -627,8 +623,8 @@ namespace NZCore
                 {
                     ref var value = ref *(half*)valuePtr;
                     ref var baseValue = ref *(half*)baseValuePtr;
-                    var newValue = (half) (baseValue * multiplier);
-                    
+                    var newValue = (half)(baseValue * multiplier);
+
                     if (newValue == value)
                     {
                         return false;
@@ -639,8 +635,8 @@ namespace NZCore
                 }
                 case GenericDataType.Float:
                 {
-                    ref float value = ref *(float*)valuePtr;
-                    ref float baseValue = ref *(float*)baseValuePtr;
+                    ref var value = ref *(float*)valuePtr;
+                    ref var baseValue = ref *(float*)baseValuePtr;
                     var newValue = baseValue * multiplier;
 
                     if (Mathf.Approximately(newValue, value))
@@ -685,7 +681,7 @@ namespace NZCore
                     ref var baseValue = ref *(double*)baseValuePtr;
                     var newValue = (double)(baseValue * multiplier);
 
-                    if ((Math.Abs(newValue - value) < double.Epsilon))
+                    if (Math.Abs(newValue - value) < double.Epsilon)
                     {
                         return false;
                     }
@@ -711,7 +707,7 @@ namespace NZCore
                 {
                     ref var value = ref *(ulong*)valuePtr;
                     ref var baseValue = ref *(ulong*)baseValuePtr;
-                    var newValue = (ulong)(baseValue * (ulong) multiplier);
+                    var newValue = (ulong)(baseValue * (ulong)multiplier);
 
                     if (newValue == value)
                     {
@@ -758,52 +754,52 @@ namespace NZCore
                 }
                 case GenericDataType.Short:
                 {
-                    *(short*) valueA = short.Parse(value);
+                    *(short*)valueA = short.Parse(value);
                     break;
                 }
                 case GenericDataType.UShort:
                 {
-                    *(ushort*) valueA = ushort.Parse(value);
+                    *(ushort*)valueA = ushort.Parse(value);
                     break;
                 }
                 case GenericDataType.Half:
                 {
-                    *(half*) valueA = (half) float.Parse(value);
+                    *(half*)valueA = (half)float.Parse(value);
                     break;
                 }
                 case GenericDataType.Float:
                 {
-                    *(float*) valueA = float.Parse(value);
+                    *(float*)valueA = float.Parse(value);
                     break;
                 }
                 case GenericDataType.Int:
                 {
-                    *(int*) valueA = int.Parse(value);
+                    *(int*)valueA = int.Parse(value);
                     break;
                 }
                 case GenericDataType.UInt:
                 {
-                    *(uint*) valueA = uint.Parse(value);
+                    *(uint*)valueA = uint.Parse(value);
                     break;
                 }
                 case GenericDataType.Double:
                 {
-                    *(double*) valueA = double.Parse(value);
+                    *(double*)valueA = double.Parse(value);
                     break;
                 }
                 case GenericDataType.Long:
                 {
-                    *(long*) valueA = long.Parse(value);
+                    *(long*)valueA = long.Parse(value);
                     break;
                 }
                 case GenericDataType.ULong:
                 {
-                    *(ulong*) valueA = ulong.Parse(value);
+                    *(ulong*)valueA = ulong.Parse(value);
                     break;
                 }
                 case GenericDataType.BigDouble:
                 {
-                    *(BigDouble*) valueA = BigDouble.Parse(value);
+                    *(BigDouble*)valueA = BigDouble.Parse(value);
                     break;
                 }
                 default:

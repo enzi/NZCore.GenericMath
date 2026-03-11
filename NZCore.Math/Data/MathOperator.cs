@@ -24,6 +24,6 @@ namespace NZCore
         Floor,
         Round,
         Log10,
-        NaturalLog,
+        NaturalLog
     }
 }

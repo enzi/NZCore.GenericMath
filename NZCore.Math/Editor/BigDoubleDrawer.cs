@@ -13,15 +13,15 @@ namespace NZCore.Editor
             var mantissaProp = property.FindPropertyRelative("_mantissa");
             var exponentProp = property.FindPropertyRelative("_exponent");
 
-            double mantissa = mantissaProp.doubleValue;
-            long exponent = exponentProp.longValue;
+            var mantissa = mantissaProp.doubleValue;
+            var exponent = exponentProp.longValue;
 
-            string display = FormatBigDouble(mantissa, exponent);
+            var display = FormatBigDouble(mantissa, exponent);
 
             EditorGUI.BeginProperty(position, label, property);
 
             EditorGUI.BeginChangeCheck();
-            string input = EditorGUI.DelayedTextField(position, label, display);
+            var input = EditorGUI.DelayedTextField(position, label, display);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -43,13 +43,19 @@ namespace NZCore.Editor
         private static string FormatBigDouble(double mantissa, long exponent)
         {
             if (mantissa == 0)
+            {
                 return "0";
+            }
 
             if (exponent == long.MaxValue)
+            {
                 return mantissa < 0 ? "-Inf" : "Inf";
+            }
 
             if (exponent == 0)
+            {
                 return mantissa.ToString("G", CultureInfo.InvariantCulture);
+            }
 
             return $"{mantissa.ToString("G", CultureInfo.InvariantCulture)}e{exponent}";
         }
