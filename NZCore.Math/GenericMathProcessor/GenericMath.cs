@@ -315,6 +315,24 @@ namespace NZCore
             };
         }
 
+        public static T ProcessMathFunction<T, TProcessor>(this MathFunction mathFunction, T a)
+            where T : unmanaged, IEquatable<T>
+            where TProcessor : struct, IGenericValueCalculator<T>
+        {
+            var processor = default(TProcessor);
+
+            return mathFunction switch
+            {
+                MathFunction.Abs => processor.Abs(a),
+                MathFunction.Ceil => processor.Ceil(a),
+                MathFunction.Floor => processor.Floor(a),
+                MathFunction.Round => processor.Round(a),
+                MathFunction.Log10 => processor.Log10(a),
+                MathFunction.NaturalLog => processor.NaturalLog(a),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+        }
+
         public static void Process(this MathOperator mathOperator, GenericDataType dataType, ref GenericUnionValue leftValue, GenericUnionValue rightValue)
         {
             switch (dataType)
@@ -501,6 +519,48 @@ namespace NZCore
                 case GenericDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");
+            }
+        }
+
+        /// <summary>
+        /// Reads the value stored at <paramref name="ptr"/> (typed by <paramref name="dataType"/>)
+        /// and returns it as a numeric <see cref="double"/>. This is a numeric conversion, not a
+        /// bit reinterpretation; it mirrors <see cref="GenericUnionValue.Create(GenericDataType,double)"/>
+        /// in the opposite direction.
+        /// </summary>
+        public static unsafe double ReadAsDouble(GenericDataType dataType, byte* ptr)
+        {
+            switch (dataType)
+            {
+#if BIGDOUBLE
+                case GenericDataType.BigDouble:
+                    return (double)*(BigDouble*)ptr;
+#endif
+                case GenericDataType.Short:
+                    return *(short*)ptr;
+                case GenericDataType.UShort:
+                    return *(ushort*)ptr;
+                case GenericDataType.Half:
+                    return (float)*(half*)ptr;
+                case GenericDataType.Float:
+                    return *(float*)ptr;
+                case GenericDataType.Int:
+                    return *(int*)ptr;
+                case GenericDataType.UInt:
+                    return *(uint*)ptr;
+                case GenericDataType.Double:
+                    return *(double*)ptr;
+                case GenericDataType.Long:
+                    return *(long*)ptr;
+                case GenericDataType.ULong:
+                    return *(ulong*)ptr;
+                case GenericDataType.Byte:
+                    return *ptr;
+                case GenericDataType.Bool:
+                    return *ptr > 0 ? 1 : 0;
+                case GenericDataType.None:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);
             }
         }
 

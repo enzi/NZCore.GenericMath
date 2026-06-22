@@ -5,6 +5,7 @@
         "Unity.Mathematics",
         "Unity.Collections",
         "Unity.Entities",
+        "Unity.Burst",
         "NZCore",
         "NZCore.Math",
         "UnityEngine.UI"
