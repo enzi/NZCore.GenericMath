@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace NZCore
 {
@@ -119,10 +120,10 @@ namespace NZCore
                 return NaN;
             }
 
-            var result = new BigDouble(double.Parse(value, CultureInfo.InvariantCulture));
-            if (result.IsNaN)
+            if (!double.TryParse(value, out var result))
             {
-                throw new Exception("Value is NaN!");
+                Debug.LogError($"Could not parse {value}");
+                return 0;
             }
 
             return result;
