@@ -8,7 +8,11 @@ using Unity.Mathematics;
 
 namespace NZCore
 {
+#if BIGDOUBLE
+    [StructLayout(LayoutKind.Explicit, Size = 16)]
+#else
     [StructLayout(LayoutKind.Explicit, Size = 8)]
+#endif
     public struct GenericUnionValue
     {
 #if BIGDOUBLE
