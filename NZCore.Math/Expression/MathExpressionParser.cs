@@ -13,6 +13,9 @@ namespace NZCore
     /// Managed, main-thread tokenizer + shunting-yard parser. Turns a formula string into
     /// a flat RPN token list. Not Burst-compatible; runs once at bake time.
     /// </summary>
+#if UNITY_6000_5_OR_NEWER
+    [Unity.Scripting.LifecycleManagement.NoAutoStaticsCleanup]
+#endif
     internal static class MathExpressionParser
     {
         internal enum RpnType : byte
