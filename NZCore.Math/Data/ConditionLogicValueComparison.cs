@@ -18,11 +18,4 @@ namespace NZCore
         LesserEqual,
         HasFlag
     }
-
-    [Serializable]
-    public enum ConditionLogicalConnection : byte
-    {
-        AND,
-        OR
-    }
 }
