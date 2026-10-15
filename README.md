@@ -133,6 +133,12 @@ if (!GenericMath.Dispatch(dataType, ref action))
 
 `Dispatch` returns false for `Bool` and `None`. `BigDouble` is only dispatched with the `BIGDOUBLE` define.
 
+Inside an action, `GenericCastUtility.Convert<TFrom, TTo>(value)` converts between two type parameters with the same rules as
+`GenericUnionValue.Cast`. It's generated for every type with a processor, Burst reduces each use to its one cast, and other types throw an
+`ArgumentException`. `GenericCastUtility.DataTypeOf<T>()` returns the `GenericDataType` of a type parameter, or `None` for types without a
+processor such as enums and `bool`. Two nested `Dispatch` calls give an action both value types, for example to apply an operator to values
+of different types.
+
 ## Atomic operations
 
 `GenericMathAtomic` applies the same operators when several job workers write the same value in one frame. Every call returns the value from

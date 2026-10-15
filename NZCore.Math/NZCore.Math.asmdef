@@ -6,7 +6,8 @@
         "Unity.Mathematics",
         "Unity.Collections",
         "Unity.Entities",
-        "NZCore"
+        "NZCore",
+        "NZCore.Common.SourceGenerators"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
