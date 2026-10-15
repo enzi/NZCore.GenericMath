@@ -11,6 +11,58 @@ namespace NZCore
 {
     public static partial class GenericMath
     {
+        /// <summary>
+        /// Calls <paramref name="action"/> with the C# type and processor of <paramref name="dataType"/>.
+        /// Switch on the type once and loop inside <see cref="IGenericMathAction.Invoke{T,TProcessor}"/> instead of calling the
+        /// runtime-typed API per value. Returns false for types without a processor (Bool, None), the caller decides what happens then.
+        /// </summary>
+        public static bool Dispatch<TAction>(GenericDataType dataType, ref TAction action)
+            where TAction : struct, IGenericMathAction
+        {
+            switch (dataType)
+            {
+                case GenericDataType.Byte:
+                    action.Invoke<byte, GenericMathProcessor.ByteProcessor>();
+                    return true;
+                case GenericDataType.Short:
+                    action.Invoke<short, GenericMathProcessor.ShortProcessor>();
+                    return true;
+                case GenericDataType.UShort:
+                    action.Invoke<ushort, GenericMathProcessor.UShortProcessor>();
+                    return true;
+                case GenericDataType.Half:
+                    action.Invoke<half, GenericMathProcessor.HalfProcessor>();
+                    return true;
+                case GenericDataType.Float:
+                    action.Invoke<float, GenericMathProcessor.FloatProcessor>();
+                    return true;
+                case GenericDataType.Int:
+                    action.Invoke<int, GenericMathProcessor.IntProcessor>();
+                    return true;
+                case GenericDataType.UInt:
+                    action.Invoke<uint, GenericMathProcessor.UIntProcessor>();
+                    return true;
+                case GenericDataType.Double:
+                    action.Invoke<double, GenericMathProcessor.DoubleProcessor>();
+                    return true;
+                case GenericDataType.Long:
+                    action.Invoke<long, GenericMathProcessor.LongProcessor>();
+                    return true;
+                case GenericDataType.ULong:
+                    action.Invoke<ulong, GenericMathProcessor.ULongProcessor>();
+                    return true;
+#if BIGDOUBLE
+                case GenericDataType.BigDouble:
+                    action.Invoke<BigDouble, GenericMathProcessor.BigDoubleProcessor>();
+                    return true;
+#endif
+                case GenericDataType.Bool:
+                case GenericDataType.None:
+                default:
+                    return false;
+            }
+        }
+
         public static unsafe bool ProcessReturnChange<T, TProcessor>(this MathOperator mathOperator, byte* valuePtr, T rightValue)
             where T : unmanaged, IEquatable<T>
             where TProcessor : struct, IGenericValueCalculator<T>
