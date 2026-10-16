@@ -16,6 +16,7 @@ namespace NZCore
         /// Switch on the type once and loop inside <see cref="IGenericMathAction.Invoke{T,TProcessor}"/> instead of calling the
         /// runtime-typed API per value. Returns false for types without a processor (Bool, None), the caller decides what happens then.
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Dispatch<TAction>(GenericDataType dataType, ref TAction action)
             where TAction : struct, IGenericMathAction
         {
