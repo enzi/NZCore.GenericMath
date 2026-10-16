@@ -205,6 +205,23 @@ namespace NZCore.Math.Tests
             }
         }
 
+        [Test]
+        public void Generic_BigDouble_PowerKeepsFractionalExponent()
+        {
+            // ^ must behave like math.pow for every T; BigDouble once truncated the exponent, so x^1.5 returned x
+            var blob = MathExpression.Compile("x ^ 1.5", GenericDataType.BigDouble, ResolveName);
+            try
+            {
+                var result = blob.Value.Evaluate<BigDouble, GenericMathProcessor.BigDoubleProcessor, BigDoubleResolver>(
+                    new BigDoubleResolver { V0 = new BigDouble(4) });
+                Assert.AreEqual(8.0, (double)result, 1e-6);
+            }
+            finally
+            {
+                blob.Dispose();
+            }
+        }
+
         // ---- constants packing ----
 
         [Test]

@@ -34,10 +34,10 @@ namespace NZCore
             return math.log(value._mantissa) + value._exponent * math.LN10_DBL; // ln(10)
         }
 
-        public static BigDouble Pow(BigDouble value, BigDouble power) => Pow(value, (long)power);
+        public static BigDouble Pow(BigDouble value, BigDouble power) => Pow(value, (double)power);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static BigDouble Pow(BigDouble value, long exp)
+        public static BigDouble Pow(BigDouble value, double exp)
         {
             if (value._mantissa == 0)
             {

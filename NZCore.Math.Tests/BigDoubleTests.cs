@@ -378,6 +378,30 @@ namespace NZCore.Math.Tests
         }
 
         [Test]
+        public void Pow_FractionalExponent()
+        {
+            // the exponent was once truncated to long, so 4^0.5 returned 4^0 = 1
+            var result = BigDouble.Pow(new BigDouble(4.0), 0.5);
+            Assert.AreEqual(2.0, (double)result, 1e-12);
+        }
+
+        [Test]
+        public void Pow_FractionalExponent_BeyondDoubleRange()
+        {
+            // 1e300^1.5 = 1e450 overflows double, so the fractional power must stay in log space
+            var result = BigDouble.Pow(new BigDouble(1e300), 1.5);
+            Assert.AreEqual(450.0, BigDouble.Log10(result), 1e-9);
+        }
+
+        [Test]
+        public void Pow_BigDoubleExponent_KeepsFraction()
+        {
+            // the BigDouble-exponent overload cast to long before, dropping the fraction
+            var result = BigDouble.Pow(new BigDouble(4.0), new BigDouble(1.5));
+            Assert.AreEqual(8.0, (double)result, 1e-12);
+        }
+
+        [Test]
         public void Sqrt_PerfectSquare()
         {
             var v = new BigDouble(9.0, 4); // 9e4 = 90000
