@@ -70,7 +70,7 @@ namespace NZCore
             "math.floor(a)", "BigDouble.Floor(a)",
             "math.round(a)", "BigDouble.Round(a)",
             "math.log10(a)", "BigDouble.Log10(a)",
-            "math.log(a)", "BigDouble.Log2(a)",
+            "math.log(a)", "BigDouble.Ln(a)",
             "((int)a & (int)b) == (int)b", "false")] // HasFlag not implemented
         public partial struct BigDoubleProcessor : IGenericValueCalculator<BigDouble> { }
     }

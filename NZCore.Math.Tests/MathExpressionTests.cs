@@ -188,6 +188,23 @@ namespace NZCore.Math.Tests
             }
         }
 
+        [Test]
+        public void Generic_BigDouble_LnIsNaturalLog()
+        {
+            // ln must mean the natural log for every T; BigDouble once mapped it to log2 (~1.44x too large)
+            var blob = MathExpression.Compile("ln(x)", GenericDataType.BigDouble, ResolveName);
+            try
+            {
+                var result = blob.Value.Evaluate<BigDouble, GenericMathProcessor.BigDoubleProcessor, BigDoubleResolver>(
+                    new BigDoubleResolver { V0 = BigDouble.Exp(5) });
+                Assert.AreEqual(5.0, (double)result, 1e-6);
+            }
+            finally
+            {
+                blob.Dispose();
+            }
+        }
+
         // ---- constants packing ----
 
         [Test]
