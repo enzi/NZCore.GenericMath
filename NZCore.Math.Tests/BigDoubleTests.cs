@@ -1,4 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 using NUnit.Framework;
+using Unity.Burst;
+using Unity.Collections;
+using Unity.Jobs;
 
 namespace NZCore.Math.Tests
 {
@@ -561,6 +567,274 @@ namespace NZCore.Math.Tests
             Assert.IsTrue(pos > BigDouble.Zero);
             Assert.IsTrue(neg < BigDouble.Zero);
             Assert.IsTrue(pos > neg);
+        }
+
+        // ---- Operator Normalization ----
+        // Equals compares the raw fields and CompareTo compares exponents first,
+        // so every result has to be canonical: (0, 0), NaN or |mantissa| in [1, 10).
+
+        private const int OperatorCount = 5;
+
+        [Test]
+        public void Operators_ResultsAreCanonical([Values] bool burst)
+        {
+            using var operands = CreateOperands();
+            using var results = new NativeArray<BigDouble>(operands.Length * operands.Length * OperatorCount, Allocator.Persistent);
+            using var references = new NativeArray<BigDouble>(results.Length, Allocator.Persistent);
+            RunOperators(burst, operands, results, references);
+
+            var failures = new List<string>();
+            for (var i = 0; i < results.Length; i++)
+            {
+                var r = results[i];
+                var abs = System.Math.Abs(r.Mantissa);
+                var canonical = r.IsNaN || (r.Mantissa == 0 && r.Exponent == 0) || (abs >= 1.0 && abs < 10.0);
+                if (!canonical)
+                {
+                    failures.Add(Describe(operands, i, r));
+                }
+            }
+
+            Assert.IsEmpty(failures, $"{failures.Count} non-canonical results");
+        }
+
+        [Test]
+        public void Operators_MatchGeneralNormalizeWithinOneUlp([Values] bool burst)
+        {
+            using var operands = CreateOperands();
+            using var results = new NativeArray<BigDouble>(operands.Length * operands.Length * OperatorCount, Allocator.Persistent);
+            using var references = new NativeArray<BigDouble>(results.Length, Allocator.Persistent);
+            RunOperators(burst, operands, results, references);
+
+            var failures = new List<string>();
+            for (var i = 0; i < results.Length; i++)
+            {
+                var r = results[i];
+                var expected = references[i];
+
+                bool match;
+                if (r.IsNaN || expected.IsNaN)
+                {
+                    match = r.IsNaN && expected.IsNaN;
+                }
+                else if (r.Mantissa == 0 || expected.Mantissa == 0)
+                {
+                    match = r.Mantissa == 0 && expected.Mantissa == 0 && r.Exponent == expected.Exponent;
+                }
+                else
+                {
+                    var ulps = BitConverter.DoubleToInt64Bits(r.Mantissa) - BitConverter.DoubleToInt64Bits(expected.Mantissa);
+                    match = r.Exponent == expected.Exponent && ulps >= -1 && ulps <= 1;
+                }
+
+                if (!match)
+                {
+                    failures.Add($"{Describe(operands, i, r)}, general path {expected.Mantissa:R}e{expected.Exponent}");
+                }
+            }
+
+            Assert.IsEmpty(failures, $"{failures.Count} results differ from the general Normalize path");
+        }
+
+        [Test]
+        public void PowersOfTen_CompareEqualToMantissaOne([Values] bool burst)
+        {
+            // normal doubles only, a subnormal 1eK isn't close enough to 10^K to be expected as (1, K)
+            const int minPower = -307;
+            const int maxPower = 308;
+
+            var powers = new double[maxPower - minPower + 1];
+            for (var i = 0; i < powers.Length; i++)
+            {
+                powers[i] = double.Parse("1e" + (minPower + i), CultureInfo.InvariantCulture);
+            }
+
+            using var values = new NativeArray<double>(powers, Allocator.Persistent);
+            using var results = new NativeArray<BigDouble>(values.Length, Allocator.Persistent);
+
+            var job = new FromDoubleJob { Values = values, Results = results };
+            if (burst)
+            {
+                Assume.That(BurstCompiler.IsEnabled, "Burst compilation is disabled");
+                job.Run();
+            }
+            else
+            {
+                job.Execute();
+            }
+
+            var failures = new List<string>();
+            for (var i = 0; i < values.Length; i++)
+            {
+                var power = minPower + i;
+                var expected = new BigDouble(1.0, power);
+                if (results[i] != expected || results[i].CompareTo(expected) != 0)
+                {
+                    failures.Add($"1e{power} -> {results[i].Mantissa:R}e{results[i].Exponent}");
+                }
+            }
+
+            Assert.IsEmpty(failures, $"{failures.Count} powers of ten differ from (1, k)");
+        }
+
+        [Test]
+        public void Add_DoesNotNeedPowersOf10Init()
+        {
+            // same sign, so no sum cancels and needs the general Normalize path
+            var a = new BigDouble(3.0, 20);
+            var expected = new BigDouble[18];
+            var actual = new BigDouble[18];
+
+            for (var diff = 0; diff < expected.Length; diff++)
+            {
+                expected[diff] = a + new BigDouble(7.0, 20 - diff);
+            }
+
+            BigDouble.PowersOf10.Dispose();
+            try
+            {
+                for (var diff = 0; diff < actual.Length; diff++)
+                {
+                    actual[diff] = a + new BigDouble(7.0, 20 - diff);
+                }
+            }
+            finally
+            {
+                BigDouble.PowersOf10.Init();
+            }
+
+            CollectionAssert.AreEqual(expected, actual);
+        }
+
+        private static NativeArray<BigDouble> CreateOperands()
+        {
+            var mantissas = new[] { 1.0, 1.0000000000000002, 1.5, 3.3333333333333335, 5.0, 9.999999999999998 };
+
+            // long.MinValue / 4 and one below it put products and quotients right at the underflow clamp
+            var exponents = new[] { long.MinValue / 4 - 1, long.MinValue / 4, -300L, -17L, -1L, 0L, 1L, 16L, 17L, 18L, long.MaxValue / 4 };
+
+            var operands = new NativeArray<BigDouble>(mantissas.Length * exponents.Length * 2 + 2, Allocator.Persistent);
+            var index = 0;
+            foreach (var mantissa in mantissas)
+            {
+                foreach (var exponent in exponents)
+                {
+                    operands[index++] = new BigDouble(mantissa, exponent);
+                    operands[index++] = new BigDouble(-mantissa, exponent);
+                }
+            }
+
+            operands[index++] = BigDouble.Zero;
+            operands[index] = BigDouble.NaN;
+            return operands;
+        }
+
+        private static void RunOperators(bool burst, NativeArray<BigDouble> operands, NativeArray<BigDouble> results, NativeArray<BigDouble> references)
+        {
+            var job = new OperatorJob { Operands = operands, Results = results, References = references };
+            if (burst)
+            {
+                Assume.That(BurstCompiler.IsEnabled, "Burst compilation is disabled");
+                job.Run();
+            }
+            else
+            {
+                job.Execute();
+            }
+        }
+
+        private static string Describe(NativeArray<BigDouble> operands, int resultIndex, BigDouble result)
+        {
+            var pair = resultIndex / OperatorCount;
+            var a = operands[pair / operands.Length];
+            var b = operands[pair % operands.Length];
+            var op = (resultIndex % OperatorCount) switch
+            {
+                0 => "+",
+                1 => "-",
+                2 => "*",
+                3 => "/",
+                _ => "neg"
+            };
+
+            return $"({a.Mantissa:R}e{a.Exponent}) {op} ({b.Mantissa:R}e{b.Exponent}) = {result.Mantissa:R}e{result.Exponent}";
+        }
+
+        [BurstCompile(CompileSynchronously = true)]
+        private struct OperatorJob : IJob
+        {
+            [ReadOnly] public NativeArray<BigDouble> Operands;
+            public NativeArray<BigDouble> Results;
+            public NativeArray<BigDouble> References;
+
+            public void Execute()
+            {
+                for (var i = 0; i < Operands.Length; i++)
+                {
+                    for (var j = 0; j < Operands.Length; j++)
+                    {
+                        var a = Operands[i];
+                        var b = Operands[j];
+                        var index = (i * Operands.Length + j) * OperatorCount;
+
+                        Results[index] = a + b;
+                        Results[index + 1] = a - b;
+                        Results[index + 2] = a * b;
+                        Results[index + 3] = a / b;
+                        Results[index + 4] = -a;
+
+                        References[index] = ReferenceAdd(a, b);
+                        References[index + 1] = ReferenceAdd(a, new BigDouble(-b.Mantissa, b.Exponent));
+                        References[index + 2] = new BigDouble(a.Mantissa * b.Mantissa, a.Exponent + b.Exponent);
+                        References[index + 3] = new BigDouble(a.Mantissa / b.Mantissa, a.Exponent - b.Exponent);
+                        References[index + 4] = new BigDouble(-a.Mantissa, a.Exponent);
+                    }
+                }
+            }
+
+            // operator + before the fast paths, every sum goes through the general Normalize path
+            private static BigDouble ReferenceAdd(BigDouble a, BigDouble b)
+            {
+                if (a.Mantissa == 0)
+                {
+                    return b;
+                }
+
+                if (b.Mantissa == 0)
+                {
+                    return a;
+                }
+
+                var expDiff = a.Exponent - b.Exponent;
+                if (expDiff > 17)
+                {
+                    return a;
+                }
+
+                if (expDiff < -17)
+                {
+                    return b;
+                }
+
+                return expDiff >= 0
+                    ? new BigDouble(a.Mantissa + b.Mantissa * BigDouble.PowersOf10.Lookup(-expDiff), a.Exponent)
+                    : new BigDouble(a.Mantissa * BigDouble.PowersOf10.Lookup(expDiff) + b.Mantissa, b.Exponent);
+            }
+        }
+
+        [BurstCompile(CompileSynchronously = true)]
+        private struct FromDoubleJob : IJob
+        {
+            [ReadOnly] public NativeArray<double> Values;
+            public NativeArray<BigDouble> Results;
+
+            public void Execute()
+            {
+                for (var i = 0; i < Values.Length; i++)
+                {
+                    Results[i] = new BigDouble(Values[i]);
+                }
+            }
         }
 
         // ---- ToString ----
