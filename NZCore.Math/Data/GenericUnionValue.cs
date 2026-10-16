@@ -178,7 +178,7 @@ namespace NZCore
                 case GenericDataType.Byte:
                     return new GenericUnionValue { ByteValue = (byte)value };
                 case GenericDataType.Bool:
-                    return new GenericUnionValue { BoolValue = value > 0 };
+                    return new GenericUnionValue { BoolValue = value != 0 };
                 case GenericDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException(nameof(dataType), dataType, null);

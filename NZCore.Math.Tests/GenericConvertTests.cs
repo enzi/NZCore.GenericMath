@@ -159,9 +159,9 @@ namespace NZCore.Math.Tests
         private static bool HasProcessor(GenericDataType dataType)
         {
 #if BIGDOUBLE
-            return dataType != GenericDataType.None && dataType != GenericDataType.Bool;
+            return dataType != GenericDataType.None;
 #else
-            return dataType != GenericDataType.None && dataType != GenericDataType.Bool && dataType != GenericDataType.BigDouble;
+            return dataType != GenericDataType.None && dataType != GenericDataType.BigDouble;
 #endif
         }
 

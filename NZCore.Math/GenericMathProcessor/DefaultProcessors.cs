@@ -60,6 +60,8 @@ namespace NZCore
 
         public partial struct ULongProcessor : IGenericValueCalculator<ulong> { }
 
+        public partial struct BoolProcessor : IGenericValueCalculator<bool> { }
+
         [ReplaceMathMethod(
             "math.pow(a, b)", "BigDouble.Pow(a, (double) b)",
             "math.pow(b, a)", "BigDouble.Pow(b, (double) a)",

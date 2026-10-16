@@ -14,7 +14,7 @@ namespace NZCore
         /// <summary>
         /// Calls <paramref name="action"/> with the C# type and processor of <paramref name="dataType"/>.
         /// Switch on the type once and loop inside <see cref="IGenericMathAction.Invoke{T,TProcessor}"/> instead of calling the
-        /// runtime-typed API per value. Returns false for types without a processor (Bool, None), the caller decides what happens then.
+        /// runtime-typed API per value. Returns false for None, the caller decides what happens then. BigDouble only with BIGDOUBLE.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool Dispatch<TAction>(GenericDataType dataType, ref TAction action)
@@ -52,12 +52,14 @@ namespace NZCore
                 case GenericDataType.ULong:
                     action.Invoke<ulong, GenericMathProcessor.ULongProcessor>();
                     return true;
+                case GenericDataType.Bool:
+                    action.Invoke<bool, GenericMathProcessor.BoolProcessor>();
+                    return true;
 #if BIGDOUBLE
                 case GenericDataType.BigDouble:
                     action.Invoke<BigDouble, GenericMathProcessor.BigDoubleProcessor>();
                     return true;
 #endif
-                case GenericDataType.Bool:
                 case GenericDataType.None:
                 default:
                     return false;
@@ -237,6 +239,11 @@ namespace NZCore
                     break;
                 }
                 case GenericDataType.Bool:
+                {
+                    mathOperator.ProcessWithMinMax<bool, GenericMathProcessor.BoolProcessor>(
+                        valuePtr, *changeValuePtr != 0, false, *cappedValuePtr != 0);
+                    break;
+                }
                 case GenericDataType.None:
                 default:
                     break;
@@ -323,6 +330,11 @@ namespace NZCore
                     break;
                 }
                 case GenericDataType.Bool:
+                {
+                    mathOperator.ProcessWithMinMax<bool, GenericMathProcessor.BoolProcessor>(
+                        valuePtr, changeValue.ByteValue != 0, false, *cappedValuePtr != 0);
+                    break;
+                }
                 case GenericDataType.None:
                 default:
                     break;
@@ -426,7 +438,7 @@ namespace NZCore
                     leftValue.ByteValue = mathOperator.ProcessReturnValue(leftValue.ByteValue, rightValue.ByteValue);
                     break;
                 case GenericDataType.Bool:
-                    leftValue.BoolValue = mathOperator.ProcessReturnValue(leftValue.ByteValue, rightValue.ByteValue) > 0;
+                    leftValue.BoolValue = mathOperator.ProcessReturnValue(leftValue.ByteValue != 0, rightValue.ByteValue != 0);
                     break;
                 case GenericDataType.None:
                 default:
@@ -464,7 +476,7 @@ namespace NZCore
                 case GenericDataType.Byte:
                     return new GenericUnionValue { ByteValue = mathOperator.ProcessReturnValue(leftValue.ByteValue, rightValue.ByteValue) };
                 case GenericDataType.Bool:
-                    return new GenericUnionValue { BoolValue = mathOperator.ProcessReturnValue(leftValue.ByteValue, rightValue.ByteValue) > 0 };
+                    return new GenericUnionValue { BoolValue = mathOperator.ProcessReturnValue(leftValue.ByteValue != 0, rightValue.ByteValue != 0) };
                 case GenericDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");
@@ -500,7 +512,7 @@ namespace NZCore
                 case GenericDataType.Byte:
                     return new GenericUnionValue { ByteValue = mathFunction.ProcessMathFunction(value.ByteValue) };
                 case GenericDataType.Bool:
-                    return new GenericUnionValue { BoolValue = mathFunction.ProcessMathFunction(value.ByteValue) > 0 };
+                    return new GenericUnionValue { BoolValue = mathFunction.ProcessMathFunction(value.ByteValue != 0) };
                 case GenericDataType.None:
                 default:
                     throw new ArgumentOutOfRangeException($"For dataType {dataType}");
@@ -678,6 +690,10 @@ namespace NZCore
                 {
                     var val = *(ulong*)valueA;
                     return logicValueComparison.LogicalComparison(val, valueB.ULongValue);
+                }
+                case GenericDataType.Bool:
+                {
+                    return logicValueComparison.LogicalComparison(*valueA != 0, valueB.ByteValue != 0);
                 }
             }
 
