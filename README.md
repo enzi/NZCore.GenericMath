@@ -79,7 +79,7 @@ op.Process(dataType, valuePtr, GenericUnionValue.Create(dataType, 5.0));
 // report whether the stored value changed
 bool changed = op.ProcessReturnChange(dataType, valuePtr, 5f);
 
-// clamp the result to [0, *capPtr]; a null capPtr skips the clamp
+// clamp the result to [0, *capPtr]; a null capPtr only floors it at 0
 MathProcessResult result = op.ProcessCapped(dataType, valuePtr, capPtr, 5f);
 // result.Changed, result.AtMin (value <= 0), result.AtMax (value >= cap)
 
