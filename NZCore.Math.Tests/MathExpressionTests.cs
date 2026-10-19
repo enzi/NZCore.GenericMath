@@ -222,6 +222,23 @@ namespace NZCore.Math.Tests
             }
         }
 
+        [Test]
+        public void Generic_BigDouble_KeepsValuesBeyondDoubleRange()
+        {
+            // BigDouble stat formulas evaluate as BigDouble so values past double's ~1e308 don't become infinity
+            var blob = MathExpression.Compile("x * a + 5", GenericDataType.BigDouble, ResolveName);
+            try
+            {
+                var result = blob.Value.Evaluate<BigDouble, GenericMathProcessor.BigDoubleProcessor, BigDoubleResolver>(
+                    new BigDoubleResolver { V0 = new BigDouble(1, 400), V1 = new BigDouble(1e10) });
+                Assert.AreEqual(410.0, BigDouble.Log10(result), 1e-9);
+            }
+            finally
+            {
+                blob.Dispose();
+            }
+        }
+
         // ---- constants packing ----
 
         [Test]
