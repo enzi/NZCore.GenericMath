@@ -860,6 +860,19 @@ namespace NZCore
                     value = newValue;
                     return true;
                 }
+                case GenericDataType.Bool:
+                {
+                    ref var value = ref *valuePtr;
+                    var newValue = (byte)(multiplier != 0 && *baseValuePtr != 0 ? 1 : 0);
+
+                    if (newValue == value)
+                    {
+                        return false;
+                    }
+
+                    value = newValue;
+                    return true;
+                }
             }
 
             return false;
