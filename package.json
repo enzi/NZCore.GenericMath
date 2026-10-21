@@ -8,5 +8,8 @@
         "com.enzisoft.nzcore": "1.7.0",
         "com.enzisoft.sourcegenerator.common": "1.0.0"
     },
-    "type": "library"
+    "type": "library",
+    "author": {
+        "name": "Enzisoft"
+    }
 }
