@@ -44,8 +44,70 @@ namespace NZCore.Math.Tests
             Assert.AreEqual(new BigDouble(1234.0), GenericCastUtility.Convert<int, BigDouble>(1234));
             Assert.AreEqual(1.5e300, GenericCastUtility.Convert<BigDouble, double>(new BigDouble(1.5, 300)));
 
-            // BigDouble's integer conversions return 0 when the value is out of range
-            Assert.AreEqual(0, GenericCastUtility.Convert<BigDouble, int>(new BigDouble(1, 300)));
+            // out of range saturates through double, BigDouble's own integer operators would return 0
+            Assert.AreEqual(int.MaxValue, GenericCastUtility.Convert<BigDouble, int>(new BigDouble(1, 300)));
+        }
+
+        // an out-of-range conversion to an integer type saturates, Burst made it poison and managed code wrapped
+        [Test]
+        public void Cast_OutOfRangeToInteger_Saturates()
+        {
+            Assert.AreEqual(255, Cast(GenericUnionValue.Create(1000.3), GenericDataType.Double, GenericDataType.Byte).ByteValue);
+            Assert.AreEqual(0, Cast(GenericUnionValue.Create(-3.0), GenericDataType.Double, GenericDataType.Byte).ByteValue);
+            Assert.AreEqual(0u, Cast(GenericUnionValue.Create(-3.0), GenericDataType.Double, GenericDataType.UInt).UIntValue);
+            Assert.AreEqual(int.MaxValue, Cast(GenericUnionValue.Create(3e9f), GenericDataType.Float, GenericDataType.Int).IntValue);
+            Assert.AreEqual(int.MinValue, Cast(GenericUnionValue.Create(-3e9), GenericDataType.Double, GenericDataType.Int).IntValue);
+            // the largest double below 2^63, long.MaxValue itself rounds up to 2^63
+            Assert.AreEqual(9223372036854774784L, Cast(GenericUnionValue.Create(1e19), GenericDataType.Double, GenericDataType.Long).LongValue);
+
+            Assert.AreEqual(255, Cast(GenericUnionValue.Create(1000), GenericDataType.Int, GenericDataType.Byte).ByteValue);
+            Assert.AreEqual(short.MinValue, Cast(GenericUnionValue.Create(-40000), GenericDataType.Int, GenericDataType.Short).ShortValue);
+            Assert.AreEqual(0u, Cast(GenericUnionValue.Create(-1), GenericDataType.Int, GenericDataType.UInt).UIntValue);
+            Assert.AreEqual(long.MaxValue, Cast(GenericUnionValue.Create(ulong.MaxValue), GenericDataType.ULong, GenericDataType.Long).LongValue);
+        }
+
+        // values in range still convert like a C# cast, the fraction is truncated
+        [Test]
+        public void Cast_InRangeToInteger_Truncates()
+        {
+            Assert.AreEqual(-2, Cast(GenericUnionValue.Create(-2.75), GenericDataType.Double, GenericDataType.Short).ShortValue);
+            Assert.AreEqual(200, Cast(GenericUnionValue.Create(200.9f), GenericDataType.Float, GenericDataType.Byte).ByteValue);
+        }
+
+        // the typed Cast and the mixed-type math entry points share the conversion
+        [Test]
+        public unsafe void TypedCastAndSet_OutOfRangeToByte_Saturate()
+        {
+            GenericUnionValue value = default;
+            value.Cast(1000.3, GenericDataType.Byte);
+            Assert.AreEqual(255, value.ByteValue);
+
+            byte stat = 0;
+            GenericMath.Set(GenericDataType.Byte, &stat, 300.0);
+            Assert.AreEqual(255, stat);
+        }
+
+        // in Burst an out-of-range float to integer conversion was poison, a byte read back as 9389
+        [Test]
+        public void Cast_OutOfRangeToByte_SaturatesInBurst()
+        {
+            if (!BurstCompiler.IsEnabled)
+            {
+                Assert.Ignore("Burst compilation is disabled");
+            }
+
+            using var result = new NativeArray<int>(2, Allocator.Persistent);
+
+            new SaturatingCastJob { Result = result }.Run();
+
+            Assert.AreEqual(1, result[1], "the job ran managed, so Burst didn't compile Cast");
+            Assert.AreEqual(255, result[0]);
+        }
+
+        private static GenericUnionValue Cast(GenericUnionValue value, GenericDataType from, GenericDataType to)
+        {
+            value.Cast(from, to);
+            return value;
         }
 
         [Test]
@@ -82,6 +144,30 @@ namespace NZCore.Math.Tests
 
             Assert.AreEqual(1, result[1], "the job ran managed, so Burst didn't compile Convert");
             Assert.AreEqual(0, result[0]);
+        }
+    }
+
+    [BurstCompile(CompileSynchronously = true)]
+    internal struct SaturatingCastJob : IJob
+    {
+        // [0] the cast byte, [1] 1 when Execute ran Burst-compiled
+        public NativeArray<int> Result;
+
+        public void Execute()
+        {
+            var value = GenericUnionValue.Create(1000.3);
+            value.Cast(GenericDataType.Double, GenericDataType.Byte);
+            Result[0] = value.ByteValue;
+
+            var ranInBurst = 1;
+            MarkManaged(ref ranInBurst);
+            Result[1] = ranInBurst;
+        }
+
+        [BurstDiscard]
+        private static void MarkManaged(ref int ranInBurst)
+        {
+            ranInBurst = 0;
         }
     }
 
