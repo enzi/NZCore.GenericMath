@@ -63,6 +63,27 @@ namespace NZCore.Math.Tests
             Assert.IsFalse(ConditionLogicValueComparison.HasFlag.LogicalComparison(false, true));
         }
 
+        // event conditions compare through the GenericUnionValue overload, it threw for Bool
+        [TestCase(ConditionLogicValueComparison.Equal, true, true, true)]
+        [TestCase(ConditionLogicValueComparison.Equal, true, false, false)]
+        [TestCase(ConditionLogicValueComparison.NotEqual, true, false, true)]
+        [TestCase(ConditionLogicValueComparison.HasFlag, false, true, false)]
+        public void UnionComparison_ComparesBools(ConditionLogicValueComparison comparison, bool left, bool right, bool expected)
+        {
+            var result = comparison.LogicalComparison(GenericDataType.Bool, GenericUnionValue.Create(left), GenericUnionValue.Create(right));
+
+            Assert.AreEqual(expected, result);
+        }
+
+        // like the byte* overload, any non-zero byte is true
+        [Test]
+        public void UnionComparison_NonZeroByteEqualsTrue()
+        {
+            var two = new GenericUnionValue { ByteValue = 2 };
+
+            Assert.IsTrue(ConditionLogicValueComparison.Equal.LogicalComparison(GenericDataType.Bool, two, GenericUnionValue.Create(true)));
+        }
+
         // typed loops reach Bool through Dispatch instead of a separate runtime-typed path
         [Test]
         public void Dispatch_InvokesBool()
