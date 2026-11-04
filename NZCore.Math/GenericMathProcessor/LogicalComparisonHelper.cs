@@ -26,7 +26,9 @@ namespace NZCore
                 GenericDataType.ULong => logicValueComparison.LogicalComparison(leftValue.ULongValue, rightValue.ULongValue),
                 GenericDataType.Long => logicValueComparison.LogicalComparison(leftValue.LongValue, rightValue.LongValue),
                 GenericDataType.Byte => logicValueComparison.LogicalComparison(leftValue.ByteValue, rightValue.ByteValue),
-                GenericDataType.Bool or GenericDataType.None => throw new ArgumentOutOfRangeException($"For Key {dataType}"),
+                // any non-zero byte is true, like GenericMath's byte* overload
+                GenericDataType.Bool => logicValueComparison.LogicalComparison(leftValue.ByteValue != 0, rightValue.ByteValue != 0),
+                GenericDataType.None => throw new ArgumentOutOfRangeException($"For Key {dataType}"),
                 _ => throw new ArgumentOutOfRangeException($"For Key {dataType}")
             };
         }
